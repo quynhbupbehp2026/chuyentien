@@ -30,6 +30,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -107,7 +109,7 @@
 
                 <!-- Mã QR VietQR -->
                 <div class="w-full flex justify-center mb-4">
-                    <img id="cardQrImg" src="" alt="Mã QR" class="w-64 h-64 object-contain">
+                    <img id="cardQrImg" src="" crossorigin="anonymous" alt="Mã QR" class="w-64 h-64 object-contain">
                 </div>
 
                 <!-- Ngân hàng & STK -->
@@ -133,9 +135,13 @@
                 </div>
             </div>
 
-            <!-- Nút đóng -->
+            <!-- Các nút thao tác dưới Popup -->
             <div class="mt-4 flex gap-2">
-                <button onclick="toggleModal('qrModal')" class="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition">
+                <button id="copyBtn" onclick="copyCardToClipboard()" class="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition flex items-center justify-center gap-2 shadow-md">
+                    <i class="fa-solid fa-copy"></i>
+                    <span id="copyBtnText">Sao chép ảnh</span>
+                </button>
+                <button onclick="toggleModal('qrModal')" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition">
                     Đóng
                 </button>
             </div>
@@ -325,9 +331,9 @@
             document.documentElement.classList.remove('dark');
         }
 
-        // Parse Smart Amount (Nếu nhập < 1000 như 50, 100 -> Tự nhân 1000)
+        // Parse Smart Amount
         function getSmartAmount(rawValue) {
-            if (!rawValue || rawValue.trim() === '') return 0; // Trả về 0 nếu trống
+            if (!rawValue || rawValue.trim() === '') return 0;
             let num = Number(rawValue.replace(/\D/g, ''));
             if (!num || num <= 0) return 0;
             if (num < 1000) {
@@ -345,14 +351,12 @@
             const rawVal = amountInput ? amountInput.value : '';
             const amount = getSmartAmount(rawVal);
 
-            // Nếu người dùng gõ số tắt (ví dụ 50) thì tự làm tròn thành 50.000 trong ô input
             if (amount > 0 && amountInput) {
                 amountInput.value = amount.toLocaleString('vi-VN');
             }
 
             let qrUrl = '';
             if (item.stk) {
-                // VietQR API: Nếu amount > 0 mới truyền tham số amount, ngược lại bỏ trống để người quét tự nhập
                 const amountParam = amount > 0 ? `amount=${amount}&` : '';
                 qrUrl = `https://img.vietqr.io/image/${item.bankCode}-${item.stk}-qr_only.png?${amountParam}addInfo=${encodeURIComponent(item.addInfo)}&accountName=${encodeURIComponent(item.accName)}`;
                 
@@ -360,7 +364,6 @@
                 document.getElementById('stkDot').style.display = 'inline';
                 document.getElementById('cardStk').innerText = item.stk;
             } else {
-                // Nếu là Link Gemini sẵn có
                 let targetUrl = item.url;
                 if (amount > 0) {
                     targetUrl += `?amount=${amount}`;
@@ -373,7 +376,6 @@
             document.getElementById('cardAccName').innerText = item.accName;
             document.getElementById('cardBankName').innerText = item.title;
             
-            // Hiển thị số tiền hoặc "Số tiền: Tùy chọn"
             if (amount > 0) {
                 document.getElementById('cardAmount').innerText = `${amount.toLocaleString('vi-VN')} VNĐ`;
             } else {
@@ -384,6 +386,49 @@
             document.getElementById('cardQrImg').src = qrUrl;
 
             toggleModal('qrModal');
+        }
+
+        // Chức năng sao chép toàn bộ thẻ QR vào Clipboard dưới dạng Image (PNG Blob)
+        async function copyCardToClipboard() {
+            const btnText = document.getElementById('copyBtnText');
+            const cardElement = document.getElementById('qrCardPrint');
+            const originalText = btnText.innerText;
+
+            try {
+                btnText.innerText = 'Đang xử lý...';
+                
+                const canvas = await html2canvas(cardElement, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#ffffff'
+                });
+
+                canvas.toBlob(async (blob) => {
+                    if (!blob) {
+                        alert('Không thể tạo ảnh, vui lòng thử lại!');
+                        btnText.innerText = originalText;
+                        return;
+                    }
+
+                    try {
+                        const item = new ClipboardItem({ 'image/png': blob });
+                        await navigator.clipboard.write([item]);
+                        btnText.innerText = 'Đã sao chép!';
+                        setTimeout(() => {
+                            btnText.innerText = originalText;
+                        }, 2000);
+                    } catch (err) {
+                        console.error(err);
+                        alert('Trình duyệt không hỗ trợ chép ảnh trực tiếp. Vui lòng thử trên Chrome/Edge/Safari mới nhất.');
+                        btnText.innerText = originalText;
+                    }
+                }, 'image/png');
+
+            } catch (error) {
+                console.error(error);
+                alert('Có lỗi khi tạo ảnh QR.');
+                btnText.innerText = originalText;
+            }
         }
 
         // Render Cards List
@@ -425,7 +470,7 @@
                                 <button onclick="setQuickAmount(${chat.id}, 50000)" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 text-[11px] font-medium text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap transition">50k</button>
                                 <button onclick="setQuickAmount(${chat.id}, 100000)" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 text-[11px] font-medium text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap transition">100k</button>
                                 <button onclick="setQuickAmount(${chat.id}, 150000)" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 text-[11px] font-medium text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap transition">150k</button>
-                                <button onclick="setQuickAmount(${chat.id}, 200000)" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 text-[11px] font-medium text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap transition">200k</button>
+                                <button onclick="setQuickAmount(${chat.id}, 200000)" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 text-[11px] font-medium text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 whitespace-nowrap transition">200k</button>
                                 <button onclick="setQuickAmount(${chat.id}, 500000)" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 text-[11px] font-medium text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap transition">500k</button>
                                 <button onclick="clearAmount(${chat.id})" class="px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-[11px] font-medium text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 whitespace-nowrap transition flex items-center gap-1" title="Xóa số tiền đã chọn">
                                     <i class="fa-solid fa-trash-can text-[10px]"></i> Xóa
