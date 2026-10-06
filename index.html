@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHUYỂN TIỀN CHO QUỴNH BÚP BÊ</title>
+    <title>CHUYỂN TIỀN CHO QUYNH BUP BE</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -64,7 +64,7 @@
         <!-- Hero Title -->
         <div class="text-center mb-8">
             <h2 class="text-2xl sm:text-3xl font-extrabold mb-2 text-white uppercase tracking-tight">
-                CHUYỂN TIỀN CHO QUỴNH BÚP BÊ
+                CHUYỂN TIỀN CHO QUYNH BUP BE
             </h2>
         </div>
 
@@ -182,7 +182,7 @@
             {
                 id: 4,
                 accId: 'acc4',
-                accName: 'QUỴNH BÚP BÊ',
+                accName: 'QUYNH BUP BE',
                 title: 'VIETCOMBANK',
                 bankCode: 'VCB',
                 stk: '0341006964128',
@@ -275,14 +275,14 @@
             }
         }
 
-        // Parse Smart Amount (Nâng ngưỡng nhận diện gõ tắt lên 100.000)
+        // Parse Smart Amount (Chỉ nhân 1.000 khi nhập gõ tắt số nhỏ hơn 1.000)
         function getSmartAmount(rawValue) {
             if (!rawValue || rawValue.trim() === '') return 0;
             let num = Number(rawValue.replace(/\D/g, ''));
             if (!num || num <= 0) return 0;
             
-            // Mọi số nhập vào nhỏ hơn 100.000 (vd: 50 -> 50.000, 4200 -> 4.200.000, 10200 -> 10.200.000)
-            if (num < 100000) {
+            // Nếu nhập gõ tắt nhỏ hơn 1.000 (vd: nhập 50 -> 50.000, 500 -> 500.000)
+            if (num < 1000) {
                 num = num * 1000;
             }
             return num;
