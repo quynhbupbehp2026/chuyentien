@@ -36,26 +36,8 @@
         body {
             font-family: 'Inter', sans-serif;
         }
-        .glass {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(229, 231, 235, 0.8);
-        }
-        .dark .glass {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(51, 65, 85, 0.5);
-        }
         .glass-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(229, 231, 235, 1);
-        }
-        .dark .glass-card {
-            background: rgba(30, 41, 59, 0.7);
+            background: rgba(15, 23, 42, 0.75);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(51, 65, 85, 0.6);
@@ -66,14 +48,22 @@
             border: 2px solid #e2e8f0;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
         }
+        /* Style để ẩn thanh cuộn dưới các nút chọn nhanh số tiền */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-300 flex flex-col pt-8">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col pt-8">
 
     <main class="max-w-6xl mx-auto px-4 py-8 flex-1 w-full">
         <!-- Hero Title -->
         <div class="text-center mb-8">
-            <h2 class="text-2xl sm:text-3xl font-extrabold mb-2 text-slate-900 dark:text-white uppercase tracking-tight">
+            <h2 class="text-2xl sm:text-3xl font-extrabold mb-2 text-white uppercase tracking-tight">
                 CHUYỂN TIỀN CHO QUỴNH BÚP BÊ
             </h2>
         </div>
@@ -85,10 +75,10 @@
 
         <!-- Empty State -->
         <div id="emptyState" class="hidden text-center py-12">
-            <div class="w-16 h-16 bg-slate-200 dark:bg-slate-800 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-3">
+            <div class="w-16 h-16 bg-slate-800 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-3">
                 <i class="fa-solid fa-inbox text-2xl"></i>
             </div>
-            <p class="text-slate-500 dark:text-slate-400 font-medium">Không tìm thấy tài khoản phù hợp.</p>
+            <p class="text-slate-400 font-medium">Không tìm thấy tài khoản phù hợp.</p>
         </div>
     </main>
 
@@ -148,38 +138,8 @@
         </div>
     </div>
 
-    <!-- GitHub Pages Guide Modal -->
-    <div id="guideModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
-            <div class="flex justify-between items-center mb-4 border-b border-slate-200 dark:border-slate-800 pb-3">
-                <h3 class="font-bold text-lg flex items-center gap-2 text-slate-900 dark:text-white">
-                    <i class="fa-brands fa-github text-xl text-blue-500"></i>
-                    Đưa trang này lên GitHub Pages
-                </h3>
-                <button onclick="toggleModal('guideModal')" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
-                    <i class="fa-solid fa-xmark text-xl"></i>
-                </button>
-            </div>
-            <div class="space-y-3 text-sm text-slate-600 dark:text-slate-300">
-                <p>Thực hiện các bước đơn giản sau để có link dùng vĩnh viễn:</p>
-                <ol class="list-decimal pl-5 space-y-2">
-                    <li>Đăng nhập <a href="https://github.com" target="_blank" class="text-blue-500 underline font-medium">GitHub.com</a>.</li>
-                    <li>Tạo một <strong>Repository mới</strong> và để trạng thái <strong>Public</strong>.</li>
-                    <li>Tạo file mới đặt tên chính xác là <code class="bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded text-blue-500">index.html</code>.</li>
-                    <li>Dán toàn bộ mã nguồn này vào và nhấn <strong>Commit changes</strong>.</li>
-                    <li>Vào <strong>Settings</strong> &rarr; <strong>Pages</strong>, chọn branch <code class="bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">main</code> rồi chọn <strong>Save</strong>.</li>
-                </ol>
-            </div>
-            <div class="mt-6 text-right">
-                <button onclick="toggleModal('guideModal')" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition">
-                    Đã Hiểu
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- Footer -->
-    <footer class="py-6 border-t border-slate-200 dark:border-slate-800/80 text-center text-xs text-slate-500 dark:text-slate-400">
+    <footer class="py-6 border-t border-slate-800/80 text-center text-xs text-slate-400">
         <p>Tác phẩm đầu tay của QUYNH BUP BE</p>
     </footer>
 
@@ -195,7 +155,7 @@
                 addInfo: 'TINH TINH',
                 desc: 'Bấm Tạo QR để nhập số tiền chuyển khoản.',
                 url: 'https://share.gemini.google/IfImWU4yoepd',
-                badgeBg: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20'
+                badgeBg: 'bg-emerald-950/60 text-emerald-400 border-emerald-500/80'
             },
             {
                 id: 2,
@@ -206,19 +166,18 @@
                 stk: '9972202863',
                 addInfo: 'Chuyen tien',
                 url: '',
-                badgeBg: 'bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-500/20'
+                badgeBg: 'bg-teal-950/60 text-teal-400 border-teal-500/80'
             },
             {
                 id: 3,
                 accId: 'acc3',
-                accName: 'ĐẶNG VĂN QUỲNH',
-                title: 'BIDV',
-                bankCode: 'BIDV',
-                stk: '1208134642',
+                accName: 'ĐẶNG THỊ THỤY',
+                title: 'MBV',
+                bankCode: 'MB',
+                stk: '239796868',
                 addInfo: 'CHUYEN TIEN NHANH 24/7',
-                desc: 'Bấm Tạo QR để nhập số tiền chuyển khoản',
-                url: 'https://share.gemini.google/jG1dXq8kJwxP',
-                badgeBg: 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20'
+                url: '',
+                badgeBg: 'bg-indigo-950/60 text-indigo-400 border-indigo-500/80'
             },
             {
                 id: 4,
@@ -229,7 +188,7 @@
                 stk: '0341006964128',
                 addInfo: 'CHUYEN TIEN NHANH 24/7',
                 url: 'https://share.gemini.google/UtIf1VTqOt8Y',
-                badgeBg: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
+                badgeBg: 'bg-amber-950/60 text-amber-400 border-amber-500/80'
             },
             {
                 id: 5,
@@ -241,7 +200,7 @@
                 addInfo: 'CHUYEN TIEN NHANH 24/7',
                 desc: 'Bấm Tạo QR để nhập số tiền chuyển khoản',
                 url: 'https://share.gemini.google/8PaIUsZ1iFKx',
-                badgeBg: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                badgeBg: 'bg-emerald-950/60 text-emerald-400 border-emerald-500/80'
             },
             {
                 id: 6,
@@ -252,18 +211,19 @@
                 stk: '109886083650',
                 addInfo: 'DANG THI BANG',
                 url: '',
-                badgeBg: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20'
+                badgeBg: 'bg-rose-950/60 text-rose-400 border-rose-500/80'
             },
             {
                 id: 7,
-                accId: 'acc7',
-                accName: 'ĐẶNG THỊ THỤY',
-                title: 'MBV',
-                bankCode: 'MB',
-                stk: '239796868',
+                 accId: 'acc7',
+                accName: 'ĐẶNG VĂN QUỲNH',
+                title: 'BIDV',
+                bankCode: 'BIDV',
+                stk: '1208134642',
                 addInfo: 'CHUYEN TIEN NHANH 24/7',
-                url: '',
-                badgeBg: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20'
+                desc: 'Bấm Tạo QR để nhập số tiền chuyển khoản',
+                url: 'https://share.gemini.google/jG1dXq8kJwxP',
+                badgeBg: 'bg-purple-950/60 text-purple-400 border-purple-500/80'
             },
             {
                 id: 8,
@@ -274,7 +234,7 @@
                 stk: '9649PAYK7ORQV046N1K',
                 addInfo: 'CHUYEN TIEN NHANH 24/7',
                 url: '',
-                badgeBg: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/20'
+                badgeBg: 'bg-cyan-950/60 text-cyan-400 border-cyan-500/80'
             },
             {
                 id: 9,
@@ -285,7 +245,7 @@
                 stk: '9125932162239',
                 addInfo: 'CHUYEN TIEN NHANH 24/7',
                 url: '',
-                badgeBg: 'bg-pink-500/10 text-pink-600 dark:text-pink-400 border-pink-500/20'
+                badgeBg: 'bg-pink-950/60 text-pink-400 border-pink-500/80'
             }
         ];
 
@@ -313,22 +273,6 @@
             if (input) {
                 input.value = '';
             }
-        }
-
-        // Dark/Light Theme Switching
-        function toggleTheme() {
-            const html = document.documentElement;
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-            } else {
-                html.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-            }
-        }
-
-        if (localStorage.getItem('theme') === 'light') {
-            document.documentElement.classList.remove('dark');
         }
 
         // Parse Smart Amount
@@ -388,7 +332,7 @@
             toggleModal('qrModal');
         }
 
-        // Chức năng sao chép toàn bộ thẻ QR vào Clipboard dưới dạng Image (PNG Blob)
+        // Chức năng sao chép toàn bộ thẻ QR vào Clipboard dưới dạng Image
         async function copyCardToClipboard() {
             const btnText = document.getElementById('copyBtnText');
             const cardElement = document.getElementById('qrCardPrint');
@@ -431,7 +375,7 @@
             }
         }
 
-        // Render Cards List
+        // Render Cards List khớp giao diện mẫu
         function renderCards(chats) {
             const grid = document.getElementById('chatGrid');
             const emptyState = document.getElementById('emptyState');
@@ -444,46 +388,48 @@
 
             emptyState.classList.add('hidden');
             grid.innerHTML = chats.map(chat => `
-                <div class="glass-card rounded-2xl p-5 hover:border-blue-500/50 transition-all duration-300 shadow-sm hover:shadow-md flex flex-col justify-between group">
+                <div class="glass-card rounded-2xl p-4 sm:p-5 transition-all duration-300 shadow-sm flex flex-col justify-between">
                     <div>
-                        <div class="flex justify-between items-start mb-4 gap-2">
-                            <span class="text-xs font-semibold px-2.5 py-1 rounded-full border ${chat.badgeBg}">
-                                <i class="fa-solid fa-user-circle mr-1"></i>${chat.accName}
+                        <!-- Hàng 1: Badge Tên bên trái + Nút Tạo QR bên phải nằm ngang hàng -->
+                        <div class="flex items-center justify-between gap-2 mb-3">
+                            <span class="inline-flex items-center gap-2 text-xs sm:text-sm font-black tracking-wide px-3 py-1.5 rounded-full border ${chat.badgeBg} truncate max-w-[65%]">
+                                <i class="fa-solid fa-user-circle text-base shrink-0"></i>
+                                <span class="truncate">${chat.accName}</span>
                             </span>
-                            <span class="text-[10px] text-slate-400 font-mono">
-                                ${chat.stk ? 'STK: ' + chat.stk : (chat.url ? 'ID: ' + chat.url.split('/').pop() : '')}
-                            </span>
+
+                            <button onclick="createQR(${chat.id})" class="px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition flex items-center gap-1.5 shrink-0 shadow-md">
+                                <i class="fa-solid fa-qrcode text-xs"></i>
+                                <span>Tạo QR</span>
+                            </button>
+                        </div>
+
+                        <!-- Hàng 2: STK chuẩn giao diện -->
+                        <div class="text-xs sm:text-sm text-slate-300 font-mono font-bold tracking-wider mb-4 pl-0.5">
+                            STK: <span class="text-slate-100 font-extrabold">${chat.stk ? chat.stk : (chat.url ? chat.url.split('/').pop() : '')}</span>
                         </div>
 
                         <!-- Input Amount Section -->
-                        <div class="mb-4">
-                            <label class="block text-[11px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase mb-1">
-                                Nhập số tiền (VNĐ)
+                        <div class="mb-2">
+                            <label class="block text-[11px] font-bold text-slate-400 tracking-wider uppercase mb-1.5">
+                                NHẬP SỐ TIỀN (VNĐ)
                             </label>
                             <div class="relative">
-                                <input type="text" id="amount-${chat.id}" oninput="formatCurrencyInput(this)" placeholder="Mặc định: Tùy chọn số tiền..." class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl pl-3.5 pr-10 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-semibold">
-                                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">đ</span>
+                                <input type="text" id="amount-${chat.id}" oninput="formatCurrencyInput(this)" placeholder="Mặc định: Tùy chọn số tiền..." class="w-full bg-slate-900/90 border border-slate-700/80 text-slate-100 rounded-xl pl-3.5 pr-8 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 font-medium placeholder-slate-400">
+                                <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">đ</span>
                             </div>
                             
-                            <!-- Quick Choice Buttons -->
-                            <div class="flex gap-1.5 mt-2 overflow-x-auto pb-1 items-center">
-                                <button onclick="setQuickAmount(${chat.id}, 50000)" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 text-[11px] font-medium text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap transition">50k</button>
-                                <button onclick="setQuickAmount(${chat.id}, 100000)" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 text-[11px] font-medium text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap transition">100k</button>
-                                <button onclick="setQuickAmount(${chat.id}, 150000)" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 text-[11px] font-medium text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap transition">150k</button>
-                                <button onclick="setQuickAmount(${chat.id}, 200000)" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 text-[11px] font-medium text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 whitespace-nowrap transition">200k</button>
-                                <button onclick="setQuickAmount(${chat.id}, 500000)" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 text-[11px] font-medium text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap transition">500k</button>
-                                <button onclick="clearAmount(${chat.id})" class="px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-[11px] font-medium text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 whitespace-nowrap transition flex items-center gap-1" title="Xóa số tiền đã chọn">
+                            <!-- Quick Choice Buttons (Đã ẩn thanh cuộn) -->
+                            <div class="flex gap-1.5 mt-3 overflow-x-auto no-scrollbar items-center">
+                                <button onclick="setQuickAmount(${chat.id}, 50000)" class="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-[11px] font-bold text-slate-300 border border-slate-700/60 whitespace-nowrap transition">50k</button>
+                                <button onclick="setQuickAmount(${chat.id}, 100000)" class="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-[11px] font-bold text-slate-300 border border-slate-700/60 whitespace-nowrap transition">100k</button>
+                                <button onclick="setQuickAmount(${chat.id}, 150000)" class="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-[11px] font-bold text-slate-300 border border-slate-700/60 whitespace-nowrap transition">150k</button>
+                                <button onclick="setQuickAmount(${chat.id}, 200000)" class="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-[11px] font-bold text-slate-300 border border-slate-700/60 whitespace-nowrap transition">200k</button>
+                                <button onclick="setQuickAmount(${chat.id}, 500000)" class="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-[11px] font-bold text-slate-300 border border-slate-700/60 whitespace-nowrap transition">500k</button>
+                                <button onclick="clearAmount(${chat.id})" class="px-2.5 py-1 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-[11px] font-bold text-rose-400 border border-rose-800/70 whitespace-nowrap transition flex items-center gap-1">
                                     <i class="fa-solid fa-trash-can text-[10px]"></i> Xóa
                                 </button>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-end">
-                        <button onclick="createQR(${chat.id})" class="w-full text-center px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-md shadow-blue-500/20 transition flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-qrcode text-xs"></i>
-                            <span>Tạo QR</span>
-                        </button>
                     </div>
                 </div>
             `).join('');
