@@ -66,33 +66,7 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-300 flex flex-col">
-
-    <header class="sticky top-0 z-40 glass">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-500 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
-                    <i class="fa-solid fa-qrcode text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="font-bold text-lg leading-tight bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500 bg-clip-text text-transparent">
-                        Gemini Hub
-                    </h1>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Tạo Mã VietQR Chuẩn Mẫu</p>
-                </div>
-            </div>
-
-            <!-- Controls -->
-            <div class="flex items-center gap-2">
-                <button onclick="toggleModal('guideModal')" class="p-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition" title="Hướng dẫn">
-                    <i class="fa-solid fa-circle-question text-lg"></i>
-                </button>
-                <button id="themeToggle" onclick="toggleTheme()" class="p-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition" title="Đổi giao diện">
-                    <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
-                </button>
-            </div>
-        </div>
-    </header>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-300 flex flex-col pt-8">
 
     <main class="max-w-6xl mx-auto px-4 py-8 flex-1 w-full">
         <!-- Hero Title -->
@@ -305,21 +279,17 @@
         // Dark/Light Theme Switching
         function toggleTheme() {
             const html = document.documentElement;
-            const icon = document.getElementById('themeIcon');
             if (html.classList.contains('dark')) {
                 html.classList.remove('dark');
-                icon.className = 'fa-solid fa-sun text-amber-500 text-lg';
                 localStorage.setItem('theme', 'light');
             } else {
                 html.classList.add('dark');
-                icon.className = 'fa-solid fa-moon text-lg';
                 localStorage.setItem('theme', 'dark');
             }
         }
 
         if (localStorage.getItem('theme') === 'light') {
             document.documentElement.classList.remove('dark');
-            document.getElementById('themeIcon').className = 'fa-solid fa-sun text-amber-500 text-lg';
         }
 
         // Parse Smart Amount (Nếu nhập < 1000 như 50, 100 -> Tự nhân 1000)
