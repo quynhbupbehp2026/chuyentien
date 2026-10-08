@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CHUYỂN TIỀN CHO QUỲNH BÚP BÊ</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -26,11 +25,8 @@
             }
         }
     </script>
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- html2canvas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body {
@@ -70,19 +66,15 @@
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-300 flex flex-col">
 
     <main class="max-w-6xl mx-auto px-4 py-8 flex-1 w-full">
-        <!-- Hero Title -->
         <div class="text-center mb-8">
             <h2 class="text-2xl sm:text-3xl font-extrabold mb-2 text-slate-900 dark:text-white uppercase tracking-tight">
                 CHUYỂN TIỀN CHO QUỲNH BÚP BÊ
             </h2>
         </div>
 
-        <!-- Layout 3 cột -->
         <div id="chatGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <!-- Rendered by Javascript -->
-        </div>
+            </div>
 
-        <!-- Empty State -->
         <div id="emptyState" class="hidden text-center py-12">
             <div class="w-16 h-16 bg-slate-200 dark:bg-slate-800 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-3">
                 <i class="fa-solid fa-inbox text-2xl"></i>
@@ -91,50 +83,41 @@
         </div>
     </main>
 
-    <!-- Modal Xem & Sao Chép QR -->
     <div id="qrModal" class="fixed inset-0 bg-black/75 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 transition-all duration-300">
         <div class="relative w-full max-w-[360px]">
             <button onclick="toggleModal('qrModal')" class="absolute -top-10 right-0 text-white/80 hover:text-white transition text-2xl">
                 <i class="fa-solid fa-xmark"></i>
             </button>
 
-            <!-- Mẫu ảnh QR chuẩn giao diện -->
             <div id="qrCardPrint" class="qr-template-card rounded-2xl p-6 text-center text-white flex flex-col items-center">
-                
-                <!-- Tên chủ tài khoản -->
+
                 <h3 id="cardAccName" class="text-2xl font-black text-red-500 uppercase tracking-wide mb-4">
                     CHU THỊ TÍNH
                 </h3>
 
-                <!-- Mã QR VietQR -->
                 <div class="w-full flex justify-center mb-4 bg-white p-2 rounded-xl">
                     <img id="cardQrImg" src="" crossorigin="anonymous" alt="Mã QR" class="w-64 h-64 object-contain">
                 </div>
 
-                <!-- Ngân hàng & STK -->
                 <div class="text-slate-200 font-bold text-sm mb-2 flex items-center justify-center gap-1.5">
                     <span id="cardBankName">VietinBank</span>
                     <span id="stkDot">•</span>
                     <span id="stkBox">STK: <span id="cardStk">105885080166</span></span>
                 </div>
 
-                <!-- Số tiền -->
-                <div id="cardAmount" class="text-2xl font-extrabold text-blue-400 mb-1">
+                <div id="cardAmount" class="text-2xl font-extrabold text-blue-400 mb-4">
                     Số tiền: Tùy chọn
                 </div>
 
-                <!-- Nội dung chuyển khoản -->
-                <div class="text-slate-300 text-xs font-semibold mb-5">
+                <div class="hidden text-slate-300 text-xs font-semibold mb-5">
                     Nội dung: <span id="cardAddInfo">TINH TINH</span>
                 </div>
 
-                <!-- Dòng ghi chú -->
                 <div class="text-yellow-400 font-black text-lg tracking-tight uppercase">
                     CK XONG - CHỤP BƯU GỬI
                 </div>
             </div>
 
-            <!-- Nút Sao Chép Duy Nhất Vào Clipboard (Không Lưu Ảnh) -->
             <div class="mt-4 flex gap-2">
                 <button id="copyBtn" onclick="copyQRCardToClipboard()" class="flex-1 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-black font-extrabold text-xs transition flex items-center justify-center gap-2 shadow-lg">
                     <i class="fa-solid fa-copy text-sm"></i>
@@ -147,7 +130,6 @@
         </div>
     </div>
 
-    <!-- GitHub Pages Guide Modal -->
     <div id="guideModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
             <div class="flex justify-between items-center mb-4 border-b border-slate-200 dark:border-slate-800 pb-3">
@@ -177,7 +159,6 @@
         </div>
     </div>
 
-    <!-- Footer -->
     <footer class="py-6 border-t border-slate-200 dark:border-slate-800/80 text-center text-xs text-slate-500 dark:text-slate-400">
         <p>Tác phẩm đầu tay của QUYNH BUP BE</p>
     </footer>
@@ -337,7 +318,7 @@
             if (item.stk) {
                 const amountParam = amount > 0 ? `amount=${amount}&` : '';
                 qrUrl = `https://img.vietqr.io/image/${item.bankCode}-${item.stk}-qr_only.png?${amountParam}addInfo=${encodeURIComponent(item.addInfo)}&accountName=${encodeURIComponent(item.accName)}`;
-                
+
                 document.getElementById('stkBox').style.display = 'inline';
                 document.getElementById('stkDot').style.display = 'inline';
                 document.getElementById('cardStk').innerText = item.stk;
@@ -353,7 +334,7 @@
 
             document.getElementById('cardAccName').innerText = item.accName;
             document.getElementById('cardBankName').innerText = item.title;
-            
+
             if (amount > 0) {
                 document.getElementById('cardAmount').innerText = `Số tiền: ${amount.toLocaleString('vi-VN')} VNĐ`;
             } else {
@@ -361,7 +342,7 @@
             }
 
             document.getElementById('cardAddInfo').innerText = item.addInfo;
-            
+
             const qrImg = document.getElementById('cardQrImg');
             qrImg.src = qrUrl;
 
@@ -377,14 +358,12 @@
             btnText.innerText = 'Đang sao chép...';
 
             try {
-                // Kiểm tra hỗ trợ Clipboard Item
                 if (!navigator.clipboard || !window.ClipboardItem) {
                     alert('Trình duyệt này không hỗ trợ sao chép ảnh trực tiếp vào bộ nhớ tạm.');
                     btnText.innerText = originalText;
                     return;
                 }
 
-                // Giữ luồng User Gesture cho Safari iOS bằng Promise ClipboardItem
                 const clipboardPromise = new Promise(async (resolve, reject) => {
                     try {
                         const canvas = await html2canvas(cardElement, {
@@ -406,7 +385,6 @@
                     }
                 });
 
-                // Thực hiện copy vào bộ nhớ tạm
                 await navigator.clipboard.write([
                     new ClipboardItem({
                         'image/png': clipboardPromise
@@ -440,7 +418,6 @@
             grid.innerHTML = chats.map(chat => `
                 <div class="glass-card rounded-2xl p-5 hover:border-red-500/50 transition-all duration-300 shadow-sm hover:shadow-md flex flex-col justify-between group">
                     <div>
-                        <!-- Header Thẻ -->
                         <div class="flex flex-col mb-4 pb-3 border-b border-slate-200/60 dark:border-slate-800">
                             <div class="w-full text-base font-extrabold tracking-wide uppercase px-3 py-1.5 rounded-xl border ${chat.badgeBg} flex items-center justify-center gap-2 mb-2.5 shadow-sm">
                                 <i class="fa-solid fa-user-circle text-lg"></i>
@@ -455,12 +432,11 @@
                             </div>
                         </div>
 
-                        <!-- Input Amount & Create QR Section -->
                         <div class="mb-4">
                             <label class="block text-[11px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase mb-1">
                                 Nhập số tiền (VNĐ)
                             </label>
-                            
+
                             <div class="flex gap-2 items-center">
                                 <div class="relative flex-1">
                                     <input type="text" id="amount-${chat.id}" oninput="formatCurrencyInput(this)" placeholder="Mặc định số tiền..." class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl pl-3 pr-7 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 font-semibold">
@@ -471,8 +447,7 @@
                                     <span>Tạo QR</span>
                                 </button>
                             </div>
-                            
-                            <!-- Quick Amount Buttons -->
+
                             <div class="flex gap-1.5 mt-3 overflow-x-auto pb-1">
                                 <button onclick="setQuickAmount(${chat.id}, 50000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">50k</button>
                                 <button onclick="setQuickAmount(${chat.id}, 100000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">100k</button>
