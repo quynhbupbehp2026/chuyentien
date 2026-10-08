@@ -30,6 +30,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- html2canvas để chụp toàn bộ thẻ QR thành hình ảnh -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -107,7 +109,7 @@
 
                 <!-- Mã QR VietQR -->
                 <div class="w-full flex justify-center mb-4 bg-white p-2 rounded-xl">
-                    <img id="cardQrImg" src="" alt="Mã QR" class="w-64 h-64 object-contain">
+                    <img id="cardQrImg" src="" crossorigin="anonymous" alt="Mã QR" class="w-64 h-64 object-contain">
                 </div>
 
                 <!-- Ngân hàng & STK -->
@@ -133,9 +135,13 @@
                 </div>
             </div>
 
-            <!-- Nút đóng -->
+            <!-- Nút chức năng Sao chép & Đóng -->
             <div class="mt-4 flex gap-2">
-                <button onclick="toggleModal('qrModal')" class="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition">
+                <button id="copyBtn" onclick="copyQRCardImage()" class="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-black font-extrabold text-xs transition flex items-center justify-center gap-2 shadow-lg">
+                    <i class="fa-solid fa-copy text-sm"></i>
+                    <span id="copyBtnText">Sao Chép Mã QR</span>
+                </button>
+                <button onclick="toggleModal('qrModal')" class="py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition">
                     Đóng
                 </button>
             </div>
@@ -356,9 +362,72 @@
             }
 
             document.getElementById('cardAddInfo').innerText = item.addInfo;
-            document.getElementById('cardQrImg').src = qrUrl;
+            
+            // Thiết lập src ảnh QR
+            const qrImg = document.getElementById('cardQrImg');
+            qrImg.src = qrUrl;
 
             toggleModal('qrModal');
+        }
+
+        // Sao chép toàn bộ thẻ QR thành hình ảnh (Hỗ trợ Safari iOS / Android)
+        async function copyQRCardImage() {
+            const cardElement = document.getElementById('qrCardPrint');
+            const btnText = document.getElementById('copyBtnText');
+            const originalText = btnText.innerText;
+
+            btnText.innerText = 'Đang xử lý...';
+
+            try {
+                const canvas = await html2canvas(cardElement, {
+                    scale: 3, // Tăng chất lượng ảnh sắc nét
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: null
+                });
+
+                canvas.toBlob(async (blob) => {
+                    if (!blob) {
+                        alert('Không thể tạo ảnh QR!');
+                        btnText.innerText = originalText;
+                        return;
+                    }
+
+                    // Kiểm tra khả năng copy Blob vào Clipboard của trình duyệt
+                    if (navigator.clipboard && window.ClipboardItem) {
+                        try {
+                            const data = [new ClipboardItem({ 'image/png': blob })];
+                            await navigator.clipboard.write(data);
+                            btnText.innerText = 'Đã chép ảnh!';
+                            setTimeout(() => { btnText.innerText = originalText; }, 2500);
+                        } catch (err) {
+                            // Dự phòng cho Safari iOS / Chrome mobile chặn sao chép Blob
+                            fallbackDownloadImage(blob);
+                            btnText.innerText = 'Đã tải ảnh về!';
+                            setTimeout(() => { btnText.innerText = originalText; }, 2500);
+                        }
+                    } else {
+                        // Tải trực tiếp nếu thiết bị không hỗ trợ ClipboardItem
+                        fallbackDownloadImage(blob);
+                        btnText.innerText = 'Đã tải ảnh về!';
+                        setTimeout(() => { btnText.innerText = originalText; }, 2500);
+                    }
+                }, 'image/png');
+            } catch (error) {
+                console.error(error);
+                alert('Có lỗi xảy ra khi sao chép ảnh QR.');
+                btnText.innerText = originalText;
+            }
+        }
+
+        // Hàm tải xuống trực tiếp khi clipboard không được cấp quyền trên điện thoại
+        function fallbackDownloadImage(blob) {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'ma-qr-chuyen-tien.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         // Render Cards List
