@@ -296,7 +296,7 @@
             }
         }
 
-        // Set Quick Amount (Khi gán từ các nút 50k, 100k...)
+        // Set Quick Amount (Khi gán từ các nút 50k, 100k, 150k, 200k, 250k, 500k...)
         function setQuickAmount(id, amount) {
             const input = document.getElementById(`amount-${id}`);
             if (input) {
@@ -390,31 +390,34 @@
                             </div>
                         </div>
 
-                        <!-- Input Amount Section -->
+                        <!-- Input Amount & Create QR Row Section -->
                         <div class="mb-4">
                             <label class="block text-[11px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase mb-1">
                                 Nhập số tiền (VNĐ)
                             </label>
-                            <div class="relative">
-                                <input type="text" id="amount-${chat.id}" oninput="formatCurrencyInput(this)" placeholder="Mặc định: Tùy chọn số tiền..." class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl pl-3.5 pr-10 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-semibold">
-                                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">đ</span>
+                            
+                            <!-- Hàng chứa Input và Nút Tạo QR nằm cùng một dòng -->
+                            <div class="flex gap-2 items-center">
+                                <div class="relative flex-1">
+                                    <input type="text" id="amount-${chat.id}" oninput="formatCurrencyInput(this)" placeholder="Mặc định: Tùy chọn số tiền..." class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl pl-3 pr-8 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-semibold">
+                                    <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">đ</span>
+                                </div>
+                                <button onclick="createQR(${chat.id})" class="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-500/20 transition flex items-center justify-center gap-1.5 shrink-0">
+                                    <i class="fa-solid fa-qrcode text-xs"></i>
+                                    <span>Tạo QR</span>
+                                </button>
                             </div>
                             
-                            <!-- Quick Choice Buttons -->
-                            <div class="flex gap-1.5 mt-2 overflow-x-auto pb-1">
+                            <!-- Quick Choice Buttons (Đã thêm 150k và 250k) -->
+                            <div class="flex gap-1.5 mt-2.5 overflow-x-auto pb-1">
                                 <button onclick="setQuickAmount(${chat.id}, 50000)" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 text-[11px] font-medium text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap transition">50k</button>
                                 <button onclick="setQuickAmount(${chat.id}, 100000)" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 text-[11px] font-medium text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap transition">100k</button>
+                                <button onclick="setQuickAmount(${chat.id}, 150000)" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 text-[11px] font-medium text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap transition">150k</button>
                                 <button onclick="setQuickAmount(${chat.id}, 200000)" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 text-[11px] font-medium text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap transition">200k</button>
+                                <button onclick="setQuickAmount(${chat.id}, 250000)" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 text-[11px] font-medium text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap transition">250k</button>
                                 <button onclick="setQuickAmount(${chat.id}, 500000)" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 text-[11px] font-medium text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap transition">500k</button>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-end">
-                        <button onclick="createQR(${chat.id})" class="w-full text-center px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-md shadow-blue-500/20 transition flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-qrcode text-xs"></i>
-                            <span>Tạo QR</span>
-                        </button>
                     </div>
                 </div>
             `).join('');
