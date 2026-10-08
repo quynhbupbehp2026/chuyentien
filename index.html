@@ -405,52 +405,64 @@
                 return;
             }
 
+            // Bảng màu chữ theo hàng: Hàng 1 (Xanh lá), Hàng 2 (Tím), Hàng 3 (Vàng tươi)
+            const rowTextColors = [
+                'text-emerald-400',
+                'text-purple-400',
+                'text-yellow-300'
+            ];
+
             emptyState.classList.add('hidden');
-            grid.innerHTML = chats.map(chat => `
-                <div class="glass-card rounded-2xl p-5 hover:border-red-500/50 transition-all duration-300 shadow-sm hover:shadow-md flex flex-col justify-between group">
-                    <div>
-                        <div class="flex flex-col mb-4 pb-3 border-b border-slate-200/60 dark:border-slate-800">
-                            <div class="w-full text-base font-extrabold tracking-wide uppercase px-3 py-1.5 rounded-xl border border-slate-700 bg-black text-white flex items-center justify-center gap-2 mb-2.5 shadow-sm">
-                                <i class="fa-solid fa-user-circle text-lg text-amber-400"></i>
-                                <span>${chat.accName}</span>
-                            </div>
+            grid.innerHTML = chats.map((chat, index) => {
+                const rowIndex = Math.floor(index / 3);
+                const textColorClass = rowTextColors[rowIndex] || 'text-white';
 
-                            <div class="flex items-center justify-between px-1 text-sm font-bold text-slate-900 dark:text-white">
-                                <span><i class="fa-solid fa-building-columns mr-1.5"></i>${chat.title}</span>
-                                <span class="font-mono text-slate-900 dark:text-white bg-slate-200/80 dark:bg-slate-800 px-2.5 py-1 rounded-md border border-slate-300 dark:border-slate-700 font-extrabold tracking-wide">
-                                    ${chat.stk ? 'STK: ' + chat.stk : (chat.url ? 'ID: ' + chat.url.split('/').pop() : '')}
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="block text-[11px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase mb-1">
-                                Nhập số tiền (VNĐ)
-                            </label>
-
-                            <div class="flex gap-2 items-center">
-                                <div class="relative flex-1">
-                                    <input type="text" id="amount-${chat.id}" oninput="formatCurrencyInput(this)" placeholder="Mặc định số tiền..." class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl pl-3 pr-7 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 font-semibold">
-                                    <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">đ</span>
+                return `
+                    <div class="glass-card rounded-2xl p-5 hover:border-red-500/50 transition-all duration-300 shadow-sm hover:shadow-md flex flex-col justify-between group">
+                        <div>
+                            <div class="flex flex-col mb-4 pb-3 border-b border-slate-200/60 dark:border-slate-800">
+                                <div class="w-full text-base font-extrabold tracking-wide uppercase px-3 py-1.5 rounded-xl border border-slate-700 bg-black ${textColorClass} flex items-center justify-center gap-2 mb-2.5 shadow-sm">
+                                    <i class="fa-solid fa-user-circle text-lg"></i>
+                                    <span>${chat.accName}</span>
                                 </div>
-                                <button onclick="createQR(${chat.id})" class="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm font-extrabold shadow-md shadow-red-600/30 transition flex items-center justify-center gap-2 shrink-0">
-                                    <i class="fa-solid fa-qrcode text-base"></i>
-                                    <span>Tạo QR</span>
-                                </button>
+
+                                <div class="flex items-center justify-between px-1 text-sm font-bold text-slate-900 dark:text-white">
+                                    <span><i class="fa-solid fa-building-columns mr-1.5"></i>${chat.title}</span>
+                                    <span class="font-mono text-slate-900 dark:text-white bg-slate-200/80 dark:bg-slate-800 px-2.5 py-1 rounded-md border border-slate-300 dark:border-slate-700 font-extrabold tracking-wide">
+                                        ${chat.stk ? 'STK: ' + chat.stk : (chat.url ? 'ID: ' + chat.url.split('/').pop() : '')}
+                                    </span>
+                                </div>
                             </div>
 
-                            <div class="flex gap-1.5 mt-3 overflow-x-auto pb-1">
-                                <button onclick="setQuickAmount(${chat.id}, 50000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">50k</button>
-                                <button onclick="setQuickAmount(${chat.id}, 100000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">100k</button>
-                                <button onclick="setQuickAmount(${chat.id}, 150000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">150k</button>
-                                <button onclick="setQuickAmount(${chat.id}, 200000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">200k</button>
-                                <button onclick="setQuickAmount(${chat.id}, 250000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">250k</button>
-                                <button onclick="setQuickAmount(${chat.id}, 500000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">500k</button>
+                            <div class="mb-4">
+                                <label class="block text-[11px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase mb-1">
+                                    Nhập số tiền (VNĐ)
+                                </label>
+
+                                <div class="flex gap-2 items-center">
+                                    <div class="relative flex-1">
+                                        <input type="text" id="amount-${chat.id}" oninput="formatCurrencyInput(this)" placeholder="Mặc định số tiền..." class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl pl-3 pr-7 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 font-semibold">
+                                        <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">đ</span>
+                                    </div>
+                                    <button onclick="createQR(${chat.id})" class="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm font-extrabold shadow-md shadow-red-600/30 transition flex items-center justify-center gap-2 shrink-0">
+                                        <i class="fa-solid fa-qrcode text-base"></i>
+                                        <span>Tạo QR</span>
+                                    </button>
+                                </div>
+
+                                <div class="flex gap-1.5 mt-3 overflow-x-auto pb-1">
+                                    <button onclick="setQuickAmount(${chat.id}, 50000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">50k</button>
+                                    <button onclick="setQuickAmount(${chat.id}, 100000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">100k</button>
+                                    <button onclick="setQuickAmount(${chat.id}, 150000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">150k</button>
+                                    <button onclick="setQuickAmount(${chat.id}, 200000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">200k</button>
+                                    <button onclick="setQuickAmount(${chat.id}, 250000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">250k</button>
+                                    <button onclick="setQuickAmount(${chat.id}, 500000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">500k</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function toggleModal(modalId) {
