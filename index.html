@@ -30,7 +30,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- html2canvas để chụp toàn bộ thẻ QR thành hình ảnh -->
+    <!-- html2canvas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body {
@@ -60,7 +60,6 @@
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(51, 65, 85, 0.6);
         }
-        /* Mẫu thẻ VietQR chuẩn thiết kế */
         .qr-template-card {
             background-color: #0f172a;
             border: 2px solid #334155;
@@ -92,7 +91,7 @@
         </div>
     </main>
 
-    <!-- Custom Exact Match QR Code Popup Modal -->
+    <!-- Modal Xem & Sao Chép QR -->
     <div id="qrModal" class="fixed inset-0 bg-black/75 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 transition-all duration-300">
         <div class="relative w-full max-w-[360px]">
             <button onclick="toggleModal('qrModal')" class="absolute -top-10 right-0 text-white/80 hover:text-white transition text-2xl">
@@ -129,19 +128,19 @@
                     Nội dung: <span id="cardAddInfo">TINH TINH</span>
                 </div>
 
-                <!-- Dòng ghi chú MÀU VÀNG NỔI BẬT -->
+                <!-- Dòng ghi chú -->
                 <div class="text-yellow-400 font-black text-lg tracking-tight uppercase">
                     CK XONG CHỤP BƯU GỬI
                 </div>
             </div>
 
-            <!-- Nút chức năng Sao chép & Đóng -->
+            <!-- Nút Sao Chép Duy Nhất Vào Clipboard (Không Lưu Ảnh) -->
             <div class="mt-4 flex gap-2">
-                <button id="copyBtn" onclick="copyQRCardImage()" class="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-black font-extrabold text-xs transition flex items-center justify-center gap-2 shadow-lg">
+                <button id="copyBtn" onclick="copyQRCardToClipboard()" class="flex-1 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-black font-extrabold text-xs transition flex items-center justify-center gap-2 shadow-lg">
                     <i class="fa-solid fa-copy text-sm"></i>
                     <span id="copyBtnText">Sao Chép Mã QR</span>
                 </button>
-                <button onclick="toggleModal('qrModal')" class="py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition">
+                <button onclick="toggleModal('qrModal')" class="py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition">
                     Đóng
                 </button>
             </div>
@@ -363,71 +362,67 @@
 
             document.getElementById('cardAddInfo').innerText = item.addInfo;
             
-            // Thiết lập src ảnh QR
             const qrImg = document.getElementById('cardQrImg');
             qrImg.src = qrUrl;
 
             toggleModal('qrModal');
         }
 
-        // Sao chép toàn bộ thẻ QR thành hình ảnh (Hỗ trợ Safari iOS / Android)
-        async function copyQRCardImage() {
+        // CHỈ SAO CHÉP VÀO CLIPBOARD - BỎ HOÀN TOÀN TỰ ĐỘNG TẢI ẢNH VỀ MÁY
+        async function copyQRCardToClipboard() {
             const cardElement = document.getElementById('qrCardPrint');
             const btnText = document.getElementById('copyBtnText');
             const originalText = btnText.innerText;
 
-            btnText.innerText = 'Đang xử lý...';
+            btnText.innerText = 'Đang sao chép...';
 
             try {
-                const canvas = await html2canvas(cardElement, {
-                    scale: 3, // Tăng chất lượng ảnh sắc nét
-                    useCORS: true,
-                    allowTaint: true,
-                    backgroundColor: null
+                // Kiểm tra hỗ trợ Clipboard Item
+                if (!navigator.clipboard || !window.ClipboardItem) {
+                    alert('Trình duyệt này không hỗ trợ sao chép ảnh trực tiếp vào bộ nhớ tạm.');
+                    btnText.innerText = originalText;
+                    return;
+                }
+
+                // Giữ luồng User Gesture cho Safari iOS bằng Promise ClipboardItem
+                const clipboardPromise = new Promise(async (resolve, reject) => {
+                    try {
+                        const canvas = await html2canvas(cardElement, {
+                            scale: 3,
+                            useCORS: true,
+                            allowTaint: true,
+                            backgroundColor: null
+                        });
+
+                        canvas.toBlob((blob) => {
+                            if (blob) {
+                                resolve(blob);
+                            } else {
+                                reject(new Error('Tạo ảnh thất bại'));
+                            }
+                        }, 'image/png');
+                    } catch (e) {
+                        reject(e);
+                    }
                 });
 
-                canvas.toBlob(async (blob) => {
-                    if (!blob) {
-                        alert('Không thể tạo ảnh QR!');
-                        btnText.innerText = originalText;
-                        return;
-                    }
+                // Thực hiện copy vào bộ nhớ tạm
+                await navigator.clipboard.write([
+                    new ClipboardItem({
+                        'image/png': clipboardPromise
+                    })
+                ]);
 
-                    // Kiểm tra khả năng copy Blob vào Clipboard của trình duyệt
-                    if (navigator.clipboard && window.ClipboardItem) {
-                        try {
-                            const data = [new ClipboardItem({ 'image/png': blob })];
-                            await navigator.clipboard.write(data);
-                            btnText.innerText = 'Đã chép ảnh!';
-                            setTimeout(() => { btnText.innerText = originalText; }, 2500);
-                        } catch (err) {
-                            // Dự phòng cho Safari iOS / Chrome mobile chặn sao chép Blob
-                            fallbackDownloadImage(blob);
-                            btnText.innerText = 'Đã tải ảnh về!';
-                            setTimeout(() => { btnText.innerText = originalText; }, 2500);
-                        }
-                    } else {
-                        // Tải trực tiếp nếu thiết bị không hỗ trợ ClipboardItem
-                        fallbackDownloadImage(blob);
-                        btnText.innerText = 'Đã tải ảnh về!';
-                        setTimeout(() => { btnText.innerText = originalText; }, 2500);
-                    }
-                }, 'image/png');
+                btnText.innerText = 'Đã chép vào bộ nhớ tạm!';
+                setTimeout(() => {
+                    btnText.innerText = originalText;
+                }, 2500);
+
             } catch (error) {
                 console.error(error);
-                alert('Có lỗi xảy ra khi sao chép ảnh QR.');
                 btnText.innerText = originalText;
+                alert('Không thể sao chép tự động do chính sách bảo mật trình duyệt. Bạn có thể nhấn giữ vào ảnh QR để chọn "Chép" (Copy).');
             }
-        }
-
-        // Hàm tải xuống trực tiếp khi clipboard không được cấp quyền trên điện thoại
-        function fallbackDownloadImage(blob) {
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'ma-qr-chuyen-tien.png';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
         }
 
         // Render Cards List
@@ -445,14 +440,13 @@
             grid.innerHTML = chats.map(chat => `
                 <div class="glass-card rounded-2xl p-5 hover:border-red-500/50 transition-all duration-300 shadow-sm hover:shadow-md flex flex-col justify-between group">
                     <div>
-                        <!-- Header Thẻ: Tên TK to rõ -->
+                        <!-- Header Thẻ -->
                         <div class="flex flex-col mb-4 pb-3 border-b border-slate-200/60 dark:border-slate-800">
                             <div class="w-full text-base font-extrabold tracking-wide uppercase px-3 py-1.5 rounded-xl border ${chat.badgeBg} flex items-center justify-center gap-2 mb-2.5 shadow-sm">
                                 <i class="fa-solid fa-user-circle text-lg"></i>
                                 <span>${chat.accName}</span>
                             </div>
 
-                            <!-- Hiển thị Tên Ngân hàng và STK MÀU TRẮNG, TO HƠN -->
                             <div class="flex items-center justify-between px-1 text-sm font-bold text-slate-900 dark:text-white">
                                 <span><i class="fa-solid fa-building-columns mr-1.5"></i>${chat.title}</span>
                                 <span class="font-mono text-slate-900 dark:text-white bg-slate-200/80 dark:bg-slate-800 px-2.5 py-1 rounded-md border border-slate-300 dark:border-slate-700 font-extrabold tracking-wide">
@@ -461,13 +455,12 @@
                             </div>
                         </div>
 
-                        <!-- Input Amount & Create QR Row Section -->
+                        <!-- Input Amount & Create QR Section -->
                         <div class="mb-4">
                             <label class="block text-[11px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase mb-1">
                                 Nhập số tiền (VNĐ)
                             </label>
                             
-                            <!-- Ô nhập tiền và Nút Tạo QR màu đỏ -->
                             <div class="flex gap-2 items-center">
                                 <div class="relative flex-1">
                                     <input type="text" id="amount-${chat.id}" oninput="formatCurrencyInput(this)" placeholder="Mặc định số tiền..." class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl pl-3 pr-7 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 font-semibold">
@@ -479,7 +472,7 @@
                                 </button>
                             </div>
                             
-                            <!-- Quick Choice Buttons: NỀN ĐEN, CHỮ VÀNG NỔI BẬT -->
+                            <!-- Quick Amount Buttons -->
                             <div class="flex gap-1.5 mt-3 overflow-x-auto pb-1">
                                 <button onclick="setQuickAmount(${chat.id}, 50000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">50k</button>
                                 <button onclick="setQuickAmount(${chat.id}, 100000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">100k</button>
@@ -499,7 +492,6 @@
             modal.classList.toggle('hidden');
         }
 
-        // Run on load
         window.onload = function() {
             renderCards(chatData);
         };
