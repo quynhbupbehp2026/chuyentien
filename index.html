@@ -1,451 +1,251 @@
 <!DOCTYPE html>
-<html lang="vi" class="dark">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHUYỂN TIỀN CHO QUYNH BUP BE</title>
+    <title>Thanh Toán QR Code - Kim Chi Mobile</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        gemini: {
-                            50: '#f0f4ff',
-                            100: '#e0eaff',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                            800: '#1e40af',
-                            900: '#1e3a8a',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- html2canvas -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .bg-gradient-custom {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
         }
         .glass-card {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(51, 65, 85, 0.6);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
         }
-        /* Mẫu thẻ VietQR chuẩn thiết kế */
-        .qr-template-card {
-            background-color: #ffffff;
-            border: 2px solid #e2e8f0;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-        /* Style để ẩn thanh cuộn dưới các nút chọn nhanh số tiền */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+        .animate-pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col pt-8">
+<body class="min-h-screen bg-slate-900 flex items-center justify-center p-3 sm:p-4">
 
-    <main class="max-w-6xl mx-auto px-4 py-8 flex-1 w-full">
-        <!-- Hero Title -->
-        <div class="text-center mb-8">
-            <h2 class="text-2xl sm:text-3xl font-extrabold mb-2 text-white uppercase tracking-tight">
-                CHUYỂN TIỀN CHO QUYNH BUP BE
-            </h2>
-        </div>
-
-        <!-- Layout 3 cột -->
-        <div id="chatGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <!-- Rendered by Javascript -->
-        </div>
-
-        <!-- Empty State -->
-        <div id="emptyState" class="hidden text-center py-12">
-            <div class="w-16 h-16 bg-slate-800 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-3">
-                <i class="fa-solid fa-inbox text-2xl"></i>
+    <!-- Main Container -->
+    <div class="w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-100 my-auto">
+        
+        <!-- Header -->
+        <div class="bg-gradient-custom p-6 text-white text-center relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 w-32 h-32 bg-blue-500/20 rounded-full blur-2xl"></div>
+            <div class="absolute -left-10 -bottom-10 w-32 h-32 bg-indigo-500/20 rounded-full blur-2xl"></div>
+            
+            <div class="relative z-10">
+                <div class="inline-flex items-center justify-center p-3 bg-white/10 rounded-2xl mb-3 backdrop-blur-md border border-white/10">
+                    <i class="fa-solid fa-[#005baa] fa-qrcode text-3xl text-blue-400"></i>
+                </div>
+                <h1 class="text-xl font-bold tracking-tight text-white">KIM CHI MOBILE</h1>
+                <p class="text-xs text-slate-300 mt-1 font-medium">Tạo mã QR chuyển khoản nhanh chóng</p>
             </div>
-            <p class="text-slate-400 font-medium">Không tìm thấy tài khoản phù hợp.</p>
         </div>
-    </main>
 
-    <!-- Custom Exact Match QR Code Popup Modal -->
-    <div id="qrModal" class="fixed inset-0 bg-black/75 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 transition-all duration-300">
-        <div class="relative w-full max-w-[360px]">
-            <button onclick="toggleModal('qrModal')" class="absolute -top-10 right-0 text-white/80 hover:text-white transition text-2xl">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-
-            <!-- Mẫu ảnh QR chuẩn giao diện -->
-            <div id="qrCardPrint" class="qr-template-card rounded-2xl p-6 text-center text-slate-800 flex flex-col items-center">
+        <!-- Form Body -->
+        <div class="p-5 sm:p-6 space-y-5">
+            
+            <!-- Thông tin tài khoản nhận -->
+            <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100 space-y-3">
+                <div class="flex items-center justify-between text-xs text-slate-500 font-semibold uppercase tracking-wider">
+                    <span>Tài khoản nhận tiền</span>
+                    <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-[10px]">MB Bank</span>
+                </div>
                 
-                <!-- Tên chủ tài khoản -->
-                <h3 id="cardAccName" class="text-2xl font-black text-[#dc2626] uppercase tracking-wide mb-4">
-                    CHU THỊ TÍNH
-                </h3>
-
-                <!-- Mã QR VietQR -->
-                <div class="w-full flex justify-center mb-4">
-                    <img id="cardQrImg" src="" crossorigin="anonymous" alt="Mã QR" class="w-64 h-64 object-contain">
-                </div>
-
-                <!-- Ngân hàng & STK -->
-                <div class="text-slate-700 font-bold text-sm mb-2 flex items-center justify-center gap-1.5">
-                    <span id="cardBankName">VietinBank</span>
-                    <span id="stkDot">•</span>
-                    <span id="stkBox">STK: <span id="cardStk">105885080166</span></span>
-                </div>
-
-                <!-- Số tiền -->
-                <div id="cardAmount" class="text-2xl font-extrabold text-[#2563eb] mb-1">
-                    Số tiền: Tùy chọn
-                </div>
-
-                <!-- Nội dung chuyển khoản -->
-                <div class="text-slate-600 text-xs font-semibold mb-5">
-                    Nội dung: <span id="cardAddInfo">TINH TINH</span>
-                </div>
-
-                <!-- Dòng ghi chú màu đỏ -->
-                <div class="text-[#dc2626] font-black text-lg tracking-tight uppercase">
-                    CK XONG - CHỤP BƯU GỬI
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-slate-500">Chủ tài khoản</p>
+                        <p class="text-sm font-bold text-slate-800 uppercase" id="accountName">ĐẶNG VĂN QUỤNH</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xs text-slate-500">Số tài khoản</p>
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-sm font-extrabold text-blue-600 tracking-wider" id="accountNo">0375239239</span>
+                            <button onclick="copyToClipboard('0375239239', 'Đã chép STK!')" class="text-slate-400 hover:text-blue-600 transition-colors p-1">
+                                <i class="fa-regular fa-copy text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Các nút thao tác dưới Popup -->
-            <div class="mt-4 flex gap-2">
-                <button id="copyBtn" onclick="copyCardToClipboard()" class="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition flex items-center justify-center gap-2 shadow-md">
-                    <i class="fa-solid fa-copy"></i>
-                    <span id="copyBtnText">Sao chép ảnh</span>
-                </button>
-                <button onclick="toggleModal('qrModal')" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition">
-                    Đóng
+            <!-- Input Số tiền -->
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                    Số tiền chuyển (VNĐ) <span class="text-red-500">*</span>
+                </label>
+                <div class="relative">
+                    <input type="text" id="amountInput" inputmode="numeric" placeholder="Nhập số tiền (VD: 3200 hoặc 50000)" 
+                           class="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-lg font-bold text-slate-800 placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
+                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">VNĐ</span>
+                </div>
+                <p id="amountText" class="text-xs text-blue-600 font-semibold mt-1.5 min-h-[18px]"></p>
+                
+                <!-- Quick Amount Suggestions -->
+                <div class="grid grid-cols-4 gap-1.5 mt-2.5">
+                    <button onclick="setAmount(10000)" class="py-1.5 px-2 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 border border-transparent rounded-lg text-xs font-semibold text-slate-600 transition-all text-center">10k</button>
+                    <button onclick="setAmount(20000)" class="py-1.5 px-2 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 border border-transparent rounded-lg text-xs font-semibold text-slate-600 transition-all text-center">20k</button>
+                    <button onclick="setAmount(50000)" class="py-1.5 px-2 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 border border-transparent rounded-lg text-xs font-semibold text-slate-600 transition-all text-center">50k</button>
+                    <button onclick="setAmount(100000)" class="py-1.5 px-2 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 border border-transparent rounded-lg text-xs font-semibold text-slate-600 transition-all text-center">100k</button>
+                    <button onclick="setAmount(200000)" class="py-1.5 px-2 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 border border-transparent rounded-lg text-xs font-semibold text-slate-600 transition-all text-center">200k</button>
+                    <button onclick="setAmount(500000)" class="py-1.5 px-2 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 border border-transparent rounded-lg text-xs font-semibold text-slate-600 transition-all text-center">500k</button>
+                    <button onclick="setAmount(1000000)" class="py-1.5 px-2 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 border border-transparent rounded-lg text-xs font-semibold text-slate-600 transition-all text-center">1M</button>
+                    <button onclick="setAmount(2000000)" class="py-1.5 px-2 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 border border-transparent rounded-lg text-xs font-semibold text-slate-600 transition-all text-center">2M</button>
+                </div>
+            </div>
+
+            <!-- Input Nội dung -->
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                    Nội dung chuyển khoản
+                </label>
+                <input type="text" id="addInfoInput" placeholder="VD: CHUYEN TIEN MUA HANG" 
+                       class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
+            </div>
+
+            <!-- QR Display Area -->
+            <div id="qrContainer" class="hidden pt-2">
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center space-y-3">
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Quét mã để thanh toán</p>
+                    
+                    <div class="relative inline-block bg-white p-3 rounded-2xl shadow-sm border border-slate-100">
+                        <img id="qrImage" src="" alt="Mã QR VietQR" class="w-56 h-56 mx-auto object-contain rounded-lg">
+                    </div>
+
+                    <div class="flex items-center justify-center gap-2 text-xs text-slate-500 font-medium">
+                        <i class="fa-solid fa-shield-halved text-emerald-500"></i>
+                        <span>Thanh toán an toàn qua VietQR</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="space-y-2 pt-1">
+                <button onclick="generateQR()" 
+                        class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-bold rounded-xl shadow-lg shadow-blue-500/25 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>TẠO MÃ QR THANH TOÁN</span>
                 </button>
             </div>
+
         </div>
+
+        <!-- Footer -->
+        <div class="bg-slate-50 border-t border-slate-100 p-4 text-center">
+            <p class="text-[11px] text-slate-400 font-medium">Cửa hàng Kim Chi Mobile • Hỗ trợ mọi ngân hàng</p>
+        </div>
+
     </div>
 
-    <!-- Footer -->
-    <footer class="py-6 border-t border-slate-800/80 text-center text-xs text-slate-400">
-        <p>Tác phẩm đầu tay của QUYNH BUP BE</p>
-    </footer>
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-2xl transition-all duration-300 opacity-0 pointer-events-none translate-y-2 flex items-center gap-2 z-50">
+        <i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
+        <span id="toastMsg">Đã sao chép!</span>
+    </div>
 
+    <!-- JavaScript Handling -->
     <script>
-        const chatData = [
-            {
-                id: 1,
-                accId: 'acc1',
-                accName: 'CHU THỊ TÍNH',
-                title: 'VietinBank',
-                bankCode: 'ICB',
-                stk: '105885080166',
-                addInfo: 'TINH TINH',
-                desc: 'Bấm Tạo QR để nhập số tiền chuyển khoản.',
-                url: 'https://share.gemini.google/IfImWU4yoepd',
-                badgeBg: 'bg-emerald-950/60 text-emerald-400 border-emerald-500/80'
-            },
-            {
-                id: 2,
-                accId: 'acc2',
-                accName: 'ĐẶNG THỊ TRÀ',
-                title: 'Vietcombank',
-                bankCode: 'VCB',
-                stk: '9972202863',
-                addInfo: 'Chuyen tien',
-                url: '',
-                badgeBg: 'bg-teal-950/60 text-teal-400 border-teal-500/80'
-            },
-            {
-                id: 3,
-                accId: 'acc3',
-                accName: 'ĐẶNG THỊ THỤY',
-                title: 'MBV',
-                bankCode: 'MB',
-                stk: '239796868',
-                addInfo: 'CHUYEN TIEN NHANH 24/7',
-                url: '',
-                badgeBg: 'bg-indigo-950/60 text-indigo-400 border-indigo-500/80'
-            },
-            {
-                id: 4,
-                accId: 'acc4',
-                accName: 'QUYNH BUP BE',
-                title: 'VIETCOMBANK',
-                bankCode: 'VCB',
-                stk: '0341006964128',
-                addInfo: 'CHUYEN TIEN NHANH 24/7',
-                url: 'https://share.gemini.google/UtIf1VTqOt8Y',
-                badgeBg: 'bg-amber-950/60 text-amber-400 border-amber-500/80'
-            },
-            {
-                id: 5,
-                accId: 'acc5',
-                accName: 'CAO THỊ HUYỀN',
-                title: 'VIETCOMBANK',
-                bankCode: 'VCB',
-                stk: '9967402995',
-                addInfo: 'CHUYEN TIEN NHANH 24/7',
-                desc: 'Bấm Tạo QR để nhập số tiền chuyển khoản',
-                url: 'https://share.gemini.google/8PaIUsZ1iFKx',
-                badgeBg: 'bg-emerald-950/60 text-emerald-400 border-emerald-500/80'
-            },
-            {
-                id: 6,
-                accId: 'acc6',
-                accName: 'ĐẶNG THỊ BÀNG',
-                title: 'VietinBank',
-                bankCode: 'ICB',
-                stk: '109886083650',
-                addInfo: 'Chuyen Tien',
-                url: '',
-                badgeBg: 'bg-rose-950/60 text-rose-400 border-rose-500/80'
-            },
-            {
-                id: 7,
-                accId: 'acc7',
-                accName: 'ĐẶNG VĂN QUỲNH',
-                title: 'BIDV',
-                bankCode: 'BIDV',
-                stk: '1208134642',
-                addInfo: 'CHUYEN TIEN NHANH 24/7',
-                desc: 'Bấm Tạo QR để nhập số tiền chuyển khoản',
-                url: 'https://share.gemini.google/jG1dXq8kJwxP',
-                badgeBg: 'bg-purple-950/60 text-purple-400 border-purple-500/80'
-            },
-            {
-                id: 8,
-                accId: 'acc8',
-                accName: 'HKD CAO THỊ HUYỀN',
-                title: 'BIDV',
-                bankCode: 'BIDV',
-                stk: '9649PAYK7ORQV046N1K',
-                addInfo: 'CHUYEN TIEN NHANH 24/7',
-                url: '',
-                badgeBg: 'bg-cyan-950/60 text-cyan-400 border-cyan-500/80'
-            },
-            {
-                id: 9,
-                accId: 'acc9',
-                accName: 'NGUYỄN THU HƯƠNG',
-                title: 'MBV',
-                bankCode: 'MB',
-                stk: '9125932162239',
-                addInfo: 'CHUYEN TIEN NHANH 24/7',
-                url: '',
-                badgeBg: 'bg-pink-950/60 text-pink-400 border-pink-500/80'
-            }
-        ];
+        const BANK_ID = "MB";
+        const ACCOUNT_NO = "0375239239";
+        const ACCOUNT_NAME = "DANG VAN QUYNH";
 
-        // Format Currency Input
-        function formatCurrencyInput(input) {
-            let value = input.value.replace(/\D/g, '');
-            if (value) {
-                input.value = Number(value).toLocaleString('vi-VN');
-            } else {
-                input.value = '';
-            }
-        }
+        const amountInput = document.getElementById('amountInput');
+        const amountText = document.getElementById('amountText');
+        const addInfoInput = document.getElementById('addInfoInput');
+        const qrContainer = document.getElementById('qrContainer');
+        const qrImage = document.getElementById('qrImage');
 
-        // Set Quick Amount
-        function setQuickAmount(id, amount) {
-            const input = document.getElementById(`amount-${id}`);
-            if (input) {
-                input.value = Number(amount).toLocaleString('vi-VN');
-            }
-        }
-
-        // Clear Amount Input
-        function clearAmount(id) {
-            const input = document.getElementById(`amount-${id}`);
-            if (input) {
-                input.value = '';
-            }
-        }
-
-        // Parse Smart Amount (Chỉ nhân 1.000 khi nhập gõ tắt số nhỏ hơn 1.000)
-        function getSmartAmount(rawValue) {
-            if (!rawValue || rawValue.trim() === '') return 0;
-            let num = Number(rawValue.replace(/\D/g, ''));
-            if (!num || num <= 0) return 0;
+        // Hàm đọc số tiền chuẩn xác
+        function getRawAmount() {
+            let val = amountInput.value.replace(/[^0-9]/g, '');
+            if (!val) return 0;
+            let num = parseInt(val, 10);
             
-            // Nếu nhập gõ tắt nhỏ hơn 1.000 (vd: nhập 50 -> 50.000, 500 -> 500.000)
-            if (num < 1000) {
+            // Nếu người dùng gõ số < 10000 (VD: 3200), tự động hiểu là 3.200.000 (nhân 1000)
+            if (num > 0 && num < 10000) {
                 num = num * 1000;
             }
             return num;
         }
 
-        // Create QR Card Exact Match
-        function createQR(id) {
-            const item = chatData.find(c => c.id === id);
-            if (!item) return;
-
-            const amountInput = document.getElementById(`amount-${id}`);
-            const rawVal = amountInput ? amountInput.value : '';
-            const amount = getSmartAmount(rawVal);
-
-            if (amount > 0 && amountInput) {
-                amountInput.value = amount.toLocaleString('vi-VN');
-            }
-
-            let qrUrl = '';
-            if (item.stk) {
-                const amountParam = amount > 0 ? `amount=${amount}&` : '';
-                qrUrl = `https://img.vietqr.io/image/${item.bankCode}-${item.stk}-qr_only.png?${amountParam}addInfo=${encodeURIComponent(item.addInfo)}&accountName=${encodeURIComponent(item.accName)}`;
-                
-                document.getElementById('stkBox').style.display = 'inline';
-                document.getElementById('stkDot').style.display = 'inline';
-                document.getElementById('cardStk').innerText = item.stk;
-            } else {
-                let targetUrl = item.url;
-                if (amount > 0) {
-                    targetUrl += `?amount=${amount}`;
+        // Định dạng hiển thị khi gõ
+        amountInput.addEventListener('input', function(e) {
+            let val = this.value.replace(/[^0-9]/g, '');
+            if (val) {
+                let num = parseInt(val, 10);
+                let actualNum = num;
+                if (num > 0 && num < 10000) {
+                    actualNum = num * 1000;
                 }
-                qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(targetUrl)}`;
-                document.getElementById('stkBox').style.display = 'none';
-                document.getElementById('stkDot').style.display = 'none';
-            }
-
-            document.getElementById('cardAccName').innerText = item.accName;
-            document.getElementById('cardBankName').innerText = item.title;
-            
-            if (amount > 0) {
-                document.getElementById('cardAmount').innerText = `${amount.toLocaleString('vi-VN')} VNĐ`;
+                amountText.innerText = `Số tiền thực tế: ${actualNum.toLocaleString('vi-VN')} VNĐ`;
             } else {
-                document.getElementById('cardAmount').innerText = 'Số tiền: Tùy chọn';
+                amountText.innerText = '';
             }
+        });
 
-            document.getElementById('cardAddInfo').innerText = item.addInfo;
-            document.getElementById('cardQrImg').src = qrUrl;
-
-            toggleModal('qrModal');
+        // Đặt số tiền từ nút gợi ý (Giữ nguyên không bị nhân đôi/nhân nghìn)
+        function setAmount(val) {
+            amountInput.value = val.toLocaleString('vi-VN');
+            amountText.innerText = `Số tiền thực tế: ${val.toLocaleString('vi-VN')} VNĐ`;
         }
 
-        // Chức năng sao chép toàn bộ thẻ QR vào Clipboard dưới dạng Image
-        async function copyCardToClipboard() {
-            const btnText = document.getElementById('copyBtnText');
-            const cardElement = document.getElementById('qrCardPrint');
-            const originalText = btnText.innerText;
+        // Tạo mã QR VietQR
+        function generateQR() {
+            const finalAmount = getRawAmount();
+            const addInfo = addInfoInput.value.trim();
 
-            try {
-                btnText.innerText = 'Đang xử lý...';
-                
-                const canvas = await html2canvas(cardElement, {
-                    scale: 2,
-                    useCORS: true,
-                    backgroundColor: '#ffffff'
-                });
-
-                canvas.toBlob(async (blob) => {
-                    if (!blob) {
-                        alert('Không thể tạo ảnh, vui lòng thử lại!');
-                        btnText.innerText = originalText;
-                        return;
-                    }
-
-                    try {
-                        const item = new ClipboardItem({ 'image/png': blob });
-                        await navigator.clipboard.write([item]);
-                        btnText.innerText = 'Đã sao chép!';
-                        setTimeout(() => {
-                            btnText.innerText = originalText;
-                        }, 2000);
-                    } catch (err) {
-                        console.error(err);
-                        alert('Trình duyệt không hỗ trợ chép ảnh trực tiếp. Vui lòng thử trên Chrome/Edge/Safari mới nhất.');
-                        btnText.innerText = originalText;
-                    }
-                }, 'image/png');
-
-            } catch (error) {
-                console.error(error);
-                alert('Có lỗi khi tạo ảnh QR.');
-                btnText.innerText = originalText;
-            }
-        }
-
-        // Render Cards List khớp giao diện mẫu
-        function renderCards(chats) {
-            const grid = document.getElementById('chatGrid');
-            const emptyState = document.getElementById('emptyState');
-
-            if (chats.length === 0) {
-                grid.innerHTML = '';
-                emptyState.classList.remove('hidden');
+            if (!finalAmount || finalAmount <= 0) {
+                showToast("Vui lòng nhập số tiền hợp lệ!");
+                amountInput.focus();
                 return;
             }
 
-            emptyState.classList.add('hidden');
-            grid.innerHTML = chats.map(chat => `
-                <div class="glass-card rounded-2xl p-4 sm:p-5 transition-all duration-300 shadow-sm flex flex-col justify-between">
-                    <div>
-                        <!-- Hàng 1: Badge Tên bên trái + Nút Tạo QR bên phải nằm ngang hàng -->
-                        <div class="flex items-center justify-between gap-2 mb-3">
-                            <span class="inline-flex items-center gap-2 text-xs sm:text-sm font-black tracking-wide px-3 py-1.5 rounded-full border ${chat.badgeBg} truncate max-w-[65%]">
-                                <i class="fa-solid fa-user-circle text-base shrink-0"></i>
-                                <span class="truncate">${chat.accName}</span>
-                            </span>
+            // Cập nhật lại ô input hiển thị chính xác số tiền đầy đủ
+            amountInput.value = finalAmount.toLocaleString('vi-VN');
 
-                            <button onclick="createQR(${chat.id})" class="px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition flex items-center gap-1.5 shrink-0 shadow-md">
-                                <i class="fa-solid fa-qrcode text-xs"></i>
-                                <span>Tạo QR</span>
-                            </button>
-                        </div>
+            // Tạo URL VietQR theo chuẩn VietQR.io API
+            let qrUrl = `https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-compact2.png?amount=${finalAmount}&accountName=${encodeURIComponent(ACCOUNT_NAME)}`;
+            
+            if (addInfo) {
+                qrUrl += `&addInfo=${encodeURIComponent(addInfo)}`;
+            }
 
-                        <!-- Hàng 2: STK chuẩn giao diện -->
-                        <div class="text-xs sm:text-sm text-slate-300 font-mono font-bold tracking-wider mb-4 pl-0.5">
-                            STK: <span class="text-slate-100 font-extrabold">${chat.stk ? chat.stk : (chat.url ? chat.url.split('/').pop() : '')}</span>
-                        </div>
+            qrImage.src = qrUrl;
+            qrContainer.classList.remove('hidden');
 
-                        <!-- Input Amount Section -->
-                        <div class="mb-2">
-                            <label class="block text-[11px] font-bold text-slate-400 tracking-wider uppercase mb-1.5">
-                                NHẬP SỐ TIỀN (VNĐ)
-                            </label>
-                            <div class="relative">
-                                <input type="text" id="amount-${chat.id}" oninput="formatCurrencyInput(this)" placeholder="Mặc định: Tùy chọn số tiền..." class="w-full bg-slate-900/90 border border-slate-700/80 text-slate-100 rounded-xl pl-3.5 pr-8 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 font-medium placeholder-slate-400">
-                                <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">đ</span>
-                            </div>
-                            
-                            <!-- Quick Choice Buttons (Đã ẩn thanh cuộn) -->
-                            <div class="flex gap-1.5 mt-3 overflow-x-auto no-scrollbar items-center">
-                                <button onclick="setQuickAmount(${chat.id}, 50000)" class="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-[11px] font-bold text-slate-300 border border-slate-700/60 whitespace-nowrap transition">50k</button>
-                                <button onclick="setQuickAmount(${chat.id}, 100000)" class="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-[11px] font-bold text-slate-300 border border-slate-700/60 whitespace-nowrap transition">100k</button>
-                                <button onclick="setQuickAmount(${chat.id}, 150000)" class="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-[11px] font-bold text-slate-300 border border-slate-700/60 whitespace-nowrap transition">150k</button>
-                                <button onclick="setQuickAmount(${chat.id}, 200000)" class="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-[11px] font-bold text-slate-300 border border-slate-700/60 whitespace-nowrap transition">200k</button>
-                                <button onclick="setQuickAmount(${chat.id}, 500000)" class="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-[11px] font-bold text-slate-300 border border-slate-700/60 whitespace-nowrap transition">500k</button>
-                                <button onclick="clearAmount(${chat.id})" class="px-2.5 py-1 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-[11px] font-bold text-rose-400 border border-rose-800/70 whitespace-nowrap transition flex items-center gap-1">
-                                    <i class="fa-solid fa-trash-can text-[10px]"></i> Xóa
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
+            // Cuộn mượt tới mã QR
+            setTimeout(() => {
+                qrContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
         }
 
-        function toggleModal(modalId) {
-            const modal = document.getElementById(modalId);
-            modal.classList.toggle('hidden');
+        // Sao chép văn bản
+        function copyToClipboard(text, msg) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast(msg || "Đã sao chép vào bộ nhớ tạm!");
+            }).catch(() => {
+                showToast("Sao chép thất bại!");
+            });
         }
 
-        // Run on load
-        window.onload = function() {
-            renderCards(chatData);
-        };
+        // Hiển thị Toast thông báo
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.innerText = message;
+            
+            toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-2');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-2');
+            }, 2500);
+        }
     </script>
 </body>
 </html>
