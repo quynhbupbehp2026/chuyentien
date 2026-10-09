@@ -27,7 +27,6 @@
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -340,70 +339,107 @@
             toggleModal('qrModal');
         }
 
-        // Tối ưu hàm sao chép cực nhanh
+        // Tạo ảnh thẻ QR siêu tốc bằng Canvas thuần (Không dùng html2canvas)
         async function copyQRCardToClipboard() {
-            const cardElement = document.getElementById('qrCardPrint');
-            const qrImg = document.getElementById('cardQrImg');
             const btnText = document.getElementById('copyBtnText');
             const originalText = btnText.innerText;
 
             btnText.innerText = 'Đang xử lý...';
 
             if (!navigator.clipboard || !window.ClipboardItem) {
-                alert('Trình duyệt không hỗ trợ sao chép tự động. Vui lòng nhấn giữ ảnh QR để chọn "Sao chép".');
+                alert('Trình duyệt không hỗ trợ sao chép tự động. Bạn hãy nhấn giữ vào ảnh QR để chọn "Sao chép ảnh".');
                 btnText.innerText = originalText;
                 return;
             }
 
             try {
-                // Render khung thẻ QR với scale tối ưu (1.8x giúp chạy siêu mượt)
-                const canvas = await html2canvas(cardElement, {
-                    scale: 1.8,
-                    useCORS: true,
-                    allowTaint: false,
-                    backgroundColor: null,
-                    logging: false
+                const accName = document.getElementById('cardAccName').innerText;
+                const bankName = document.getElementById('cardBankName').innerText;
+                const stkBox = document.getElementById('stkBox');
+                const stkText = document.getElementById('cardStk').innerText;
+                const amountText = document.getElementById('cardAmount').innerText;
+                const isStkVisible = stkBox.style.display !== 'none';
+                const qrImgElement = document.getElementById('cardQrImg');
+
+                // Khởi tạo Canvas chuẩn độ phân giải cao
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const w = 720;
+                const h = 960;
+                canvas.width = w;
+                canvas.height = h;
+
+                // 1. Vẽ Nền tối (#0f172a)
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath();
+                ctx.roundRect(0, 0, w, h, 32);
+                ctx.fill();
+
+                // Viền khung
+                ctx.lineWidth = 6;
+                ctx.strokeStyle = '#334155';
+                ctx.stroke();
+
+                // 2. Tên chủ tài khoản
+                ctx.fillStyle = '#ef4444';
+                ctx.font = '900 44px "Inter", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(accName, w / 2, 90);
+
+                // 3. Tải và Vẽ ảnh QR
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                
+                await new Promise((resolve, reject) => {
+                    img.onload = resolve;
+                    img.onerror = reject;
+                    img.src = qrImgElement.src;
                 });
 
-                const blob = await new Promise((resolve, reject) => {
-                    canvas.toBlob((b) => b ? resolve(b) : reject(new Error('Tạo Blob thất bại')), 'image/png', 0.95);
-                });
+                // Khung trắng bo góc chứa QR
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.roundRect(100, 130, 520, 520, 24);
+                ctx.fill();
 
-                await navigator.clipboard.write([
-                    new ClipboardItem({ 'image/png': blob })
-                ]);
+                // Vẽ ảnh QR vào giữa
+                ctx.drawImage(img, 120, 150, 480, 480);
 
-                btnText.innerText = 'Đã chép mã QR!';
-                setTimeout(() => { btnText.innerText = originalText; }, 2000);
+                // 4. Ngân hàng & STK
+                ctx.fillStyle = '#e2e8f0';
+                ctx.font = '700 28px "Inter", sans-serif';
+                let subText = bankName;
+                if (isStkVisible) {
+                    subText += `  •  STK: ${stkText}`;
+                }
+                ctx.fillText(subText, w / 2, 700);
+
+                // 5. Số tiền
+                ctx.fillStyle = '#60a5fa';
+                ctx.font = '800 42px "Inter", sans-serif';
+                ctx.fillText(amountText, w / 2, 770);
+
+                // 6. Dòng nhắc nhở
+                ctx.fillStyle = '#facc15';
+                ctx.font = '900 36px "Inter", sans-serif';
+                ctx.fillText('CK XONG - CHỤP BƯU GỬI', w / 2, 860);
+
+                // Chuyển canvas thành Blob PNG và Sao chép
+                canvas.toBlob(async (blob) => {
+                    if (!blob) throw new Error('Không thể tạo định dạng ảnh');
+                    
+                    await navigator.clipboard.write([
+                        new ClipboardItem({ 'image/png': blob })
+                    ]);
+
+                    btnText.innerText = 'Đã chép mã QR!';
+                    setTimeout(() => { btnText.innerText = originalText; }, 2000);
+                }, 'image/png');
 
             } catch (error) {
-                console.warn('html2canvas chậm, chuyển sang chế độ sao chép trực tiếp ảnh QR:', error);
-
-                // Phương pháp dự phòng siêu tốc nếu html2canvas gặp sự cố
-                try {
-                    const response = await fetch(qrImg.src);
-                    const imageBlob = await response.blob();
-                    
-                    const imgBitmap = await createImageBitmap(imageBlob);
-                    const offscreenCanvas = document.createElement('canvas');
-                    offscreenCanvas.width = imgBitmap.width;
-                    offscreenCanvas.height = imgBitmap.height;
-                    const ctx = offscreenCanvas.getContext('2d');
-                    ctx.drawImage(imgBitmap, 0, 0);
-
-                    offscreenCanvas.toBlob(async (pngBlob) => {
-                        await navigator.clipboard.write([
-                            new ClipboardItem({ 'image/png': pngBlob })
-                        ]);
-                        btnText.innerText = 'Đã chép QR!';
-                        setTimeout(() => { btnText.innerText = originalText; }, 2000);
-                    }, 'image/png');
-
-                } catch (fallbackError) {
-                    console.error('Lỗi khi sao chép:', fallbackError);
-                    btnText.innerText = originalText;
-                    alert('Không thể sao chép tự động. Bạn hãy nhấn giữ vào ảnh QR để chọn "Sao chép ảnh" (Copy image).');
-                }
+                console.error('Lỗi sao chép:', error);
+                btnText.innerText = originalText;
+                alert('Không thể sao chép tự động do bảo mật trình duyệt. Hãy nhấn giữ trực tiếp vào ảnh QR để chọn "Sao chép ảnh" (Copy).');
             }
         }
 
