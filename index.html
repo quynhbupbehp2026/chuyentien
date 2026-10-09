@@ -164,135 +164,38 @@
 
     <script>
         const chatData = [
-            {
-                id: 1,
-                accId: 'acc1',
-                accName: 'CHU THỊ TÍNH',
-                title: 'VIETINBANK',
-                bankCode: 'ICB',
-                stk: '105885080166',
-                addInfo: 'TINH TINH',
-                desc: 'Bấm Tạo QR để nhập số tiền chuyển khoản.',
-                url: 'https://share.gemini.google/IfImWU4yoepd'
-            },
-            {
-                id: 2,
-                accId: 'acc2',
-                accName: 'ĐẶNG THỊ TRÀ',
-                title: 'VIETCOMBANK',
-                bankCode: 'VCB',
-                stk: '9972202863',
-                addInfo: 'CHUYEN TIEN NHANH 24/7',
-                url: ''
-            },
-            {
-                id: 3,
-                accId: 'acc3',
-                accName: 'ĐẶNG THỊ THỤY',
-                title: 'MBV',
-                bankCode: 'MBV',
-                stk: '239796868',
-                addInfo: 'CHUYEN TIEN NHANH 24/7',
-                desc: 'Bấm Tạo QR để nhập số tiền chuyển khoản',
-                url: ''
-            },
-            {
-                id: 4,
-                accId: 'acc4',
-                accName: 'ĐẶNG VĂN QUỲNH',
-                title: 'BIDV',
-                bankCode: 'BIDV',
-                stk: '1208134642',
-                addInfo: 'CHUYEN TIEN NHANH 24/7',
-                desc: 'Bấm Tạo QR để nhập số tiền chuyển khoản',
-                url: 'https://share.gemini.google/jG1dXq8kJwxP'
-            },
-            {
-                id: 5,
-                accId: 'acc5',
-                accName: 'NGUYỄN THU HƯƠNG',
-                title: 'MBV',
-                bankCode: 'MBV',
-                stk: '9125932162239',
-                addInfo: 'CHUYEN TIEN NHANH 24/7',
-                desc: 'Bấm Tạo QR để nhập số tiền chuyển khoản',
-                url: ''
-            },
-            {
-                id: 6,
-                accId: 'acc6',
-                accName: 'ĐẶNG THỊ BÀNG',
-                title: 'VIETINBANK',
-                bankCode: 'ICB',
-                stk: '109886083650',
-                addInfo: 'CHUYEN TIEN NHANH 24/7',
-                url: ''
-            },
-            {
-                id: 7,
-                accId: 'acc7',
-                accName: 'QUỴNH BÚP BÊ',
-                title: 'VIETCOMBANK',
-                bankCode: 'VCB',
-                stk: '0341006964128',
-                addInfo: 'CHUYEN TIEN NHANH 24/7',
-                url: 'https://share.gemini.google/UtIf1VTqOt8Y'
-            },
-            {
-                id: 8,
-                accId: 'acc8',
-                accName: 'CAO THỊ HUYỀN',
-                title: 'VIETCOMBANK',
-                bankCode: 'VCB',
-                stk: '9967402995',
-                addInfo: 'CHUYEN TIEN NHANH 24/7',
-                desc: 'Bấm Tạo QR để nhập số tiền chuyển khoản',
-                url: 'https://share.gemini.google/8PaIUsZ1iFKx'
-            },
-            {
-                id: 9,
-                accId: 'acc9',
-                accName: 'HKD CAO THỊ HUYỀN',
-                title: 'BIDV',
-                bankCode: 'BIDV',
-                stk: '9649PAYK7ORQV046N1K',
-                addInfo: 'CHUYEN TIEN NHANH 24/7',
-                desc: 'Bấm Tạo QR để nhập số tiền chuyển khoản',
-                url: ''
-            }
+            { id: 1, accId: 'acc1', accName: 'CHU THỊ TÍNH', title: 'VIETINBANK', bankCode: 'ICB', stk: '105885080166', addInfo: 'TINH TINH', desc: 'Bấm Tạo QR để nhập số tiền chuyển khoản.', url: 'https://share.gemini.google/IfImWU4yoepd' },
+            { id: 2, accId: 'acc2', accName: 'ĐẶNG THỊ TRÀ', title: 'VIETCOMBANK', bankCode: 'VCB', stk: '9972202863', addInfo: 'CHUYEN TIEN NHANH 24/7', url: '' },
+            { id: 3, accId: 'acc3', accName: 'ĐẶNG THỊ THỤY', title: 'MBV', bankCode: 'MBV', stk: '239796868', addInfo: 'CHUYEN TIEN NHANH 24/7', desc: 'Bấm Tạo QR để nhập số tiền chuyển khoản', url: '' },
+            { id: 4, accId: 'acc4', accName: 'ĐẶNG VĂN QUỲNH', title: 'BIDV', bankCode: 'BIDV', stk: '1208134642', addInfo: 'CHUYEN TIEN NHANH 24/7', desc: 'Bấm Tạo QR để nhập số tiền chuyển khoản', url: 'https://share.gemini.google/jG1dXq8kJwxP' },
+            { id: 5, accId: 'acc5', accName: 'NGUYỄN THU HƯƠNG', title: 'MBV', bankCode: 'MBV', stk: '9125932162239', addInfo: 'CHUYEN TIEN NHANH 24/7', desc: 'Bấm Tạo QR để nhập số tiền chuyển khoản', url: '' },
+            { id: 6, accId: 'acc6', accName: 'ĐẶNG THỊ BÀNG', title: 'VIETINBANK', bankCode: 'ICB', stk: '109886083650', addInfo: 'CHUYEN TIEN NHANH 24/7', url: '' },
+            { id: 7, accId: 'acc7', accName: 'QUỴNH BÚP BÊ', title: 'VIETCOMBANK', bankCode: 'VCB', stk: '0341006964128', addInfo: 'CHUYEN TIEN NHANH 24/7', url: 'https://share.gemini.google/UtIf1VTqOt8Y' },
+            { id: 8, accId: 'acc8', accName: 'CAO THỊ HUYỀN', title: 'VIETCOMBANK', bankCode: 'VCB', stk: '9967402995', addInfo: 'CHUYEN TIEN NHANH 24/7', desc: 'Bấm Tạo QR để nhập số tiền chuyển khoản', url: 'https://share.gemini.google/8PaIUsZ1iFKx' },
+            { id: 9, accId: 'acc9', accName: 'HKD CAO THỊ HUYỀN', title: 'BIDV', bankCode: 'BIDV', stk: '9649PAYK7ORQV046N1K', addInfo: 'CHUYEN TIEN NHANH 24/7', desc: 'Bấm Tạo QR để nhập số tiền chuyển khoản', url: '' }
         ];
 
-        // Format Currency Input Khi Gõ
+        let currentQrBlob = null; // Lưu Blob ảnh QR gốc cho di động
+
         function formatCurrencyInput(input) {
             let value = input.value.replace(/\D/g, '');
-            if (value) {
-                input.value = Number(value).toLocaleString('vi-VN');
-            } else {
-                input.value = '';
-            }
+            input.value = value ? Number(value).toLocaleString('vi-VN') : '';
         }
 
-        // Set Quick Amount
         function setQuickAmount(id, amount) {
             const input = document.getElementById(`amount-${id}`);
-            if (input) {
-                input.value = Number(amount).toLocaleString('vi-VN');
-            }
+            if (input) input.value = Number(amount).toLocaleString('vi-VN');
         }
 
-        // Smart Amount Processor
         function getSmartAmount(rawValue) {
             if (!rawValue || rawValue.trim() === '') return 0;
             let num = Number(rawValue.replace(/\D/g, ''));
             if (!num || num <= 0) return 0;
-            if (num < 100000) {
-                num = num * 1000;
-            }
+            if (num < 100000) num = num * 1000;
             return num;
         }
 
-        // Create QR Card
-        function createQR(id) {
+        async function createQR(id) {
             const item = chatData.find(c => c.id === id);
             if (!item) return;
 
@@ -314,9 +217,7 @@
                 document.getElementById('cardStk').innerText = item.stk;
             } else {
                 let targetUrl = item.url;
-                if (amount > 0) {
-                    targetUrl += `?amount=${amount}`;
-                }
+                if (amount > 0) targetUrl += `?amount=${amount}`;
                 qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(targetUrl)}`;
                 document.getElementById('stkBox').style.display = 'none';
                 document.getElementById('stkDot').style.display = 'none';
@@ -324,22 +225,25 @@
 
             document.getElementById('cardAccName').innerText = item.accName;
             document.getElementById('cardBankName').innerText = item.title;
-
-            if (amount > 0) {
-                document.getElementById('cardAmount').innerText = `Số tiền: ${amount.toLocaleString('vi-VN')} VNĐ`;
-            } else {
-                document.getElementById('cardAmount').innerText = 'Số tiền: Tùy chọn';
-            }
-
+            document.getElementById('cardAmount').innerText = amount > 0 ? `Số tiền: ${amount.toLocaleString('vi-VN')} VNĐ` : 'Số tiền: Tùy chọn';
             document.getElementById('cardAddInfo').innerText = item.addInfo;
 
             const qrImg = document.getElementById('cardQrImg');
             qrImg.src = qrUrl;
 
+            // Pre-fetch lấy Blob ảnh QR gốc sẵn sàng cho Mobile
+            currentQrBlob = null;
+            try {
+                const res = await fetch(qrUrl);
+                currentQrBlob = await res.blob();
+            } catch (e) {
+                console.warn("Không thể pre-fetch Blob:", e);
+            }
+
             toggleModal('qrModal');
         }
 
-        // Tạo ảnh thẻ QR siêu tốc bằng Canvas thuần (Không dùng html2canvas)
+        // Sao chép Mã QR chống treo 100% trên Điện Thoại
         async function copyQRCardToClipboard() {
             const btnText = document.getElementById('copyBtnText');
             const originalText = btnText.innerText;
@@ -347,11 +251,12 @@
             btnText.innerText = 'Đang xử lý...';
 
             if (!navigator.clipboard || !window.ClipboardItem) {
-                alert('Trình duyệt không hỗ trợ sao chép tự động. Bạn hãy nhấn giữ vào ảnh QR để chọn "Sao chép ảnh".');
+                alert('Trình duyệt không hỗ trợ sao chép tự động. Hãy nhấn giữ ảnh QR để chọn "Sao chép".');
                 btnText.innerText = originalText;
                 return;
             }
 
+            // Phương pháp 1: Vẽ Canvas nguyên khung thẻ
             try {
                 const accName = document.getElementById('cardAccName').innerText;
                 const bankName = document.getElementById('cardBankName').innerText;
@@ -361,89 +266,108 @@
                 const isStkVisible = stkBox.style.display !== 'none';
                 const qrImgElement = document.getElementById('cardQrImg');
 
-                // Khởi tạo Canvas chuẩn độ phân giải cao
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
-                const w = 720;
-                const h = 960;
-                canvas.width = w;
-                canvas.height = h;
+                canvas.width = 600;
+                canvas.height = 800;
 
-                // 1. Vẽ Nền tối (#0f172a)
+                // Khung nền
                 ctx.fillStyle = '#0f172a';
                 ctx.beginPath();
-                ctx.roundRect(0, 0, w, h, 32);
+                ctx.roundRect(0, 0, 600, 800, 24);
                 ctx.fill();
 
-                // Viền khung
-                ctx.lineWidth = 6;
-                ctx.strokeStyle = '#334155';
-                ctx.stroke();
-
-                // 2. Tên chủ tài khoản
+                // Tên
                 ctx.fillStyle = '#ef4444';
-                ctx.font = '900 44px "Inter", sans-serif';
+                ctx.font = '900 36px "Inter", sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText(accName, w / 2, 90);
+                ctx.fillText(accName, 300, 75);
 
-                // 3. Tải và Vẽ ảnh QR
+                // Load ảnh QR
                 const img = new Image();
                 img.crossOrigin = 'anonymous';
-                
-                await new Promise((resolve, reject) => {
+
+                const imageLoaded = new Promise((resolve, reject) => {
                     img.onload = resolve;
                     img.onerror = reject;
+                    // timeout 1.5s nếu ảnh bị kẹt
+                    setTimeout(() => reject(new Error("Timeout")), 1500);
                     img.src = qrImgElement.src;
                 });
 
-                // Khung trắng bo góc chứa QR
+                await imageLoaded;
+
+                // Nền trắng chứa QR
                 ctx.fillStyle = '#ffffff';
                 ctx.beginPath();
-                ctx.roundRect(100, 130, 520, 520, 24);
+                ctx.roundRect(80, 110, 440, 440, 16);
                 ctx.fill();
 
-                // Vẽ ảnh QR vào giữa
-                ctx.drawImage(img, 120, 150, 480, 480);
+                ctx.drawImage(img, 100, 130, 400, 400);
 
-                // 4. Ngân hàng & STK
+                // Thông tin ngân hàng
                 ctx.fillStyle = '#e2e8f0';
-                ctx.font = '700 28px "Inter", sans-serif';
-                let subText = bankName;
-                if (isStkVisible) {
-                    subText += `  •  STK: ${stkText}`;
-                }
-                ctx.fillText(subText, w / 2, 700);
+                ctx.font = '700 24px "Inter", sans-serif';
+                let subText = bankName + (isStkVisible ? `  •  STK: ${stkText}` : '');
+                ctx.fillText(subText, 300, 595);
 
-                // 5. Số tiền
+                // Số tiền
                 ctx.fillStyle = '#60a5fa';
-                ctx.font = '800 42px "Inter", sans-serif';
-                ctx.fillText(amountText, w / 2, 770);
+                ctx.font = '800 34px "Inter", sans-serif';
+                ctx.fillText(amountText, 300, 655);
 
-                // 6. Dòng nhắc nhở
+                // Dòng chú thích
                 ctx.fillStyle = '#facc15';
-                ctx.font = '900 36px "Inter", sans-serif';
-                ctx.fillText('CK XONG - CHỤP BƯU GỬI', w / 2, 860);
+                ctx.font = '900 28px "Inter", sans-serif';
+                ctx.fillText('CK XONG - CHỤP BƯU GỬI', 300, 730);
 
-                // Chuyển canvas thành Blob PNG và Sao chép
-                canvas.toBlob(async (blob) => {
-                    if (!blob) throw new Error('Không thể tạo định dạng ảnh');
-                    
-                    await navigator.clipboard.write([
-                        new ClipboardItem({ 'image/png': blob })
-                    ]);
+                // Tạo Blob có Timeout chống kẹt
+                const blob = await new Promise((resolve) => {
+                    canvas.toBlob((b) => resolve(b), 'image/png');
+                    setTimeout(() => resolve(null), 1000);
+                });
 
-                    btnText.innerText = 'Đã chép mã QR!';
+                if (!blob) throw new Error("Tainted Canvas trên Di Động");
+
+                await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+                btnText.innerText = 'Đã chép mã QR!';
+                setTimeout(() => { btnText.innerText = originalText; }, 2000);
+                return;
+
+            } catch (err) {
+                console.warn("Chuyển sang phương án Fallback chép trực tiếp ảnh QR gốc:", err);
+            }
+
+            // Phương pháp 2 (Fallback cho Di Động): Chép trực tiếp ảnh QR gốc cực nhanh
+            try {
+                let blobToCopy = currentQrBlob;
+
+                if (!blobToCopy) {
+                    const res = await fetch(document.getElementById('cardQrImg').src);
+                    blobToCopy = await res.blob();
+                }
+
+                // Chuyển Blob sang PNG nếu cần
+                const imgBitmap = await createImageBitmap(blobToCopy);
+                const cvs = document.createElement('canvas');
+                cvs.width = imgBitmap.width;
+                cvs.height = imgBitmap.height;
+                const ctx = cvs.getContext('2d');
+                ctx.drawImage(imgBitmap, 0, 0);
+
+                cvs.toBlob(async (pngBlob) => {
+                    await navigator.clipboard.write([new ClipboardItem({ 'image/png': pngBlob })]);
+                    btnText.innerText = 'Đã chép QR!';
                     setTimeout(() => { btnText.innerText = originalText; }, 2000);
                 }, 'image/png');
 
-            } catch (error) {
-                console.error('Lỗi sao chép:', error);
+            } catch (fallbackErr) {
+                console.error("Lỗi sao chép hoàn toàn:", fallbackErr);
                 btnText.innerText = originalText;
-                alert('Không thể sao chép tự động do bảo mật trình duyệt. Hãy nhấn giữ trực tiếp vào ảnh QR để chọn "Sao chép ảnh" (Copy).');
+                alert('Trình duyệt chặn sao chép tự động. Bạn hãy chạm và giữ vào ảnh QR 1 giây rồi chọn "Sao chép ảnh" (Copy image).');
             }
         }
 
-        // Render Cards List
         function renderCards(chats) {
             const grid = document.getElementById('chatGrid');
             const emptyState = document.getElementById('emptyState');
@@ -454,11 +378,7 @@
                 return;
             }
 
-            const rowTextColors = [
-                'text-emerald-400',
-                'text-purple-400',
-                'text-yellow-300'
-            ];
+            const rowTextColors = ['text-emerald-400', 'text-purple-400', 'text-yellow-300'];
 
             emptyState.classList.add('hidden');
             grid.innerHTML = chats.map((chat, index) => {
@@ -467,7 +387,6 @@
 
                 return `
                     <div class="glass-card rounded-2xl p-4 hover:border-red-500/50 transition-all duration-300 shadow-sm hover:shadow-md group">
-                        <!-- Thông tin chủ tài khoản & Ngân hàng -->
                         <div class="flex flex-col mb-3 pb-3 border-b border-slate-200/60 dark:border-slate-800">
                             <div class="w-full text-base font-extrabold tracking-wide uppercase px-3 py-1.5 rounded-xl border border-slate-700 bg-black flex items-center justify-center gap-2 mb-2.5 shadow-sm">
                                 <i class="fa-solid fa-user-circle text-lg text-blue-500"></i>
@@ -482,7 +401,6 @@
                             </div>
                         </div>
 
-                        <!-- Nhập số tiền & Gợi ý số tiền nhanh -->
                         <div>
                             <label class="block text-[11px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase mb-1.5">
                                 Nhập số tiền (VNĐ)
@@ -514,8 +432,7 @@
         }
 
         function toggleModal(modalId) {
-            const modal = document.getElementById(modalId);
-            modal.classList.toggle('hidden');
+            document.getElementById(modalId).classList.toggle('hidden');
         }
 
         window.onload = function() {
