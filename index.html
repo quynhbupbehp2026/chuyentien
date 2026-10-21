@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHUYỂN TIỀN CHO QUỴNH BÚP BÊ</title>
+    <title>CHUYỂN TIỀN CHO QUỲNH BÚP BÊ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
@@ -189,17 +189,8 @@
 
         async function handleTransferAction() {
             const btnText = document.getElementById('copyBtnText');
-            const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-
-            // Trên Mobile: Không dùng lệnh tải file gây hiện hộp thoại hỏi, chuyển sang hướng dẫn nhấn giữ trực tiếp vào thẻ QR rất gọn
-            if (isMobile) {
-                btnText.innerText = '👉 Nhấn giữ vào thẻ QR để sao chép!';
-                setTimeout(() => { btnText.innerText = 'CHUYỂN TIỀN'; }, 3500);
-                return;
-            }
-
-            // Trên Máy tính (PC): Giữ nguyên tính năng sao chép ảnh thẻ trực tiếp vào Clipboard rất ổn định
             btnText.innerText = 'Đang xử lý...';
+
             try {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
@@ -258,6 +249,27 @@
                 canvas.toBlob(async (blob) => {
                     if (!blob) throw new Error("Lỗi tạo ảnh");
 
+                    const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+
+                    if (isMobile && navigator.canShare) {
+                        const file = new File([blob], 'QR_ChuyenKhoan.png', { type: 'image/png' });
+                        try {
+                            await navigator.share({
+                                files: [file]
+                            });
+                            btnText.innerText = 'CHUYỂN TIỀN';
+                            return;
+                        } catch (e) {
+                            console.log('Hủy chia sẻ');
+                        }
+                    }
+
+                    if (isMobile) {
+                        btnText.innerText = 'CHUYỂN TIỀN';
+                        return;
+                    }
+
+                    // Trên Máy tính (PC): Sao chép ảnh thẻ trực tiếp vào Clipboard
                     try {
                         const item = new ClipboardItem({ 'image/png': blob });
                         await navigator.clipboard.write([item]);
@@ -267,6 +279,7 @@
                         btnText.innerText = 'CHUYỂN TIỀN';
                         alert('Trình duyệt máy tính chặn sao chép. Vui lòng chuột phải vào ảnh QR để sao chép.');
                     }
+
                 }, 'image/png');
 
             } catch (err) {
