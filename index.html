@@ -186,10 +186,10 @@
             toggleModal('qrModal');
         }
 
-        // Vẽ Canvas thuần siêu tốc để sao chép vào Clipboard chuẩn trên mobile
+        // Vẽ Canvas siêu tốc và tích hợp Share API cho Mobile / Clipboard cho Web
         async function copyCardAsImage() {
             const btnText = document.getElementById('copyBtnText');
-            btnText.innerText = 'Đang tạo ảnh...';
+            btnText.innerText = 'Đang xử lý...';
 
             try {
                 const canvas = document.createElement('canvas');
@@ -223,7 +223,6 @@
                     ctx.fillRect(80, 100, 440, 440);
                 }
 
-                // Lấy ảnh QR từ vùng hiển thị
                 const qrImgElement = document.querySelector('#qrcodeCanvas img') || document.querySelector('#qrcodeCanvas canvas');
                 
                 if (qrImgElement) {
@@ -254,35 +253,57 @@
                 ctx.font = '900 26px "Inter", sans-serif';
                 ctx.fillText('CK XONG - CHỤP BƯU GỬI', 300, 710);
 
-                // Xuất ra Blob và ghi vào Clipboard
                 canvas.toBlob(async (blob) => {
                     if (!blob) throw new Error("Lỗi tạo ảnh");
 
+                    const file = new File([blob], 'QR_ChuyenKhoan.png', { type: 'image/png' });
+
+                    // Nếu là mobile (Zalo/Safari/Chrome hỗ trợ Share API), mở bảng chia sẻ trực tiếp cực mượt
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        try {
+                            await navigator.share({
+                                files: [file],
+                                title: 'Mã QR chuyển khoản',
+                                text: 'Gửi mã QR chuyển khoản'
+                            });
+                            btnText.innerText = '✅ Thành công!';
+                            setTimeout(() => { btnText.innerText = 'SAO CHÉP MÃ QR'; }, 2500);
+                            return;
+                        } catch (shareErr) {
+                            console.log('Người dùng hủy share');
+                        }
+                    }
+
+                    // Thử ghi vào Clipboard (cho PC và một số trình duyệt cho phép)
                     try {
                         const item = new ClipboardItem({ 'image/png': blob });
                         await navigator.clipboard.write([item]);
                         btnText.innerText = '✅ Đã sao chép mã QR!';
                         setTimeout(() => { btnText.innerText = 'SAO CHÉP MÃ QR'; }, 2500);
-                    } catch (err) {
-                        // Fallback nếu trình duyệt chặn Clipboard, tải ảnh trực tiếp về máy cực nhanh
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = 'QR_ChuyenKhoan.png';
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
-
-                        btnText.innerText = '✅ Đã tải ảnh về máy!';
-                        setTimeout(() => { btnText.innerText = 'SAO CHÉP MÃ QR'; }, 2500);
+                        return;
+                    } catch (clipErr) {
+                        console.log('Clipboard bị chặn');
                     }
+
+                    // Fallback cuối cùng: tải về máy
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'QR_ChuyenKhoan.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+
+                    btnText.innerText = '✅ Đã lưu ảnh!';
+                    setTimeout(() => { btnText.innerText = 'SAO CHÉP MÃ QR'; }, 2500);
+
                 }, 'image/png');
 
             } catch (e) {
                 console.error(e);
                 btnText.innerText = 'SAO CHÉP MÃ QR';
-                alert('Vui lòng nhấn giữ vào mã QR để lưu ảnh.');
+                alert('Vui lòng nhấn giữ trực tiếp vào mã QR để lưu ảnh.');
             }
         }
 
@@ -340,7 +361,7 @@
                                 <button onclick="setQuickAmount(${chat.id}, 100000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">100k</button>
                                 <button onclick="setQuickAmount(${chat.id}, 150000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">150k</button>
                                 <button onclick="setQuickAmount(${chat.id}, 200000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">200k</button>
-                                <button onclick="setQuickAmount({chat.id}, 250000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">250k</button>
+                                <button onclick="setQuickAmount(${chat.id}, 250000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">250k</button>
                                 <button onclick="setQuickAmount(${chat.id}, 500000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">500k</button>
                             </div>
                         </div>
