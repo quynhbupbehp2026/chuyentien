@@ -69,7 +69,7 @@
                 <i class="fa-solid fa-xmark"></i>
             </button>
 
-            <!-- Khung thẻ cần sao chép thành ảnh -->
+            <!-- Khung thẻ cần sao chép / chuyển tiền -->
             <div id="qrCardPrint" class="qr-template-card rounded-2xl p-6 text-center text-white flex flex-col items-center">
                 <h3 id="cardAccName" class="text-2xl font-black text-red-500 uppercase tracking-wide mb-4">
                     CHU THỊ TÍNH
@@ -95,9 +95,9 @@
             </div>
 
             <div class="mt-4 flex gap-2">
-                <button id="copyBtn" onclick="copyCardAsImage()" class="flex-1 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-black font-extrabold text-xs transition flex items-center justify-center gap-2 shadow-lg">
-                    <i class="fa-solid fa-copy text-sm"></i>
-                    <span id="copyBtnText">SAO CHÉP MÃ QR</span>
+                <button id="copyBtn" onclick="handleTransferAction()" class="flex-1 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-black font-extrabold text-xs transition flex items-center justify-center gap-2 shadow-lg">
+                    <i class="fa-solid fa-paper-plane text-sm"></i>
+                    <span id="copyBtnText">CHUYỂN TIỀN</span>
                 </button>
                 <button onclick="toggleModal('qrModal')" class="py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition">
                     Đóng
@@ -186,8 +186,7 @@
             toggleModal('qrModal');
         }
 
-        // Vẽ Canvas siêu tốc và tích hợp Share API cho Mobile / Clipboard cho Web
-        async function copyCardAsImage() {
+        async function handleTransferAction() {
             const btnText = document.getElementById('copyBtnText');
             btnText.innerText = 'Đang xử lý...';
 
@@ -197,7 +196,6 @@
                 canvas.width = 600;
                 canvas.height = 780;
 
-                // 1. Vẽ nền thẻ
                 ctx.fillStyle = '#0f172a';
                 if (ctx.roundRect) {
                     ctx.beginPath();
@@ -207,13 +205,11 @@
                     ctx.fillRect(0, 0, 600, 780);
                 }
 
-                // 2. Vẽ tên tài khoản
                 ctx.fillStyle = '#ef4444';
                 ctx.font = '900 32px "Inter", sans-serif';
                 ctx.textAlign = 'center';
                 ctx.fillText(document.getElementById('cardAccName').innerText, 300, 70);
 
-                // 3. Vẽ khung trắng chứa QR
                 ctx.fillStyle = '#ffffff';
                 if (ctx.roundRect) {
                     ctx.beginPath();
@@ -224,7 +220,6 @@
                 }
 
                 const qrImgElement = document.querySelector('#qrcodeCanvas img') || document.querySelector('#qrcodeCanvas canvas');
-                
                 if (qrImgElement) {
                     await new Promise((resolve) => {
                         if (qrImgElement.tagName === 'IMG') {
@@ -237,18 +232,15 @@
                     ctx.drawImage(qrImgElement, 100, 120, 400, 400);
                 }
 
-                // 4. Vẽ thông tin Ngân hàng & STK
                 ctx.fillStyle = '#e2e8f0';
                 ctx.font = '700 22px "Inter", sans-serif';
                 const bankText = document.getElementById('cardBankName').innerText + '  •  STK: ' + document.getElementById('cardStk').innerText;
                 ctx.fillText(bankText, 300, 580);
 
-                // 5. Vẽ số tiền
                 ctx.fillStyle = '#60a5fa';
                 ctx.font = '800 28px "Inter", sans-serif';
                 ctx.fillText(document.getElementById('cardAmount').innerText, 300, 635);
 
-                // 6. Vẽ chú thích cuối
                 ctx.fillStyle = '#facc15';
                 ctx.font = '900 26px "Inter", sans-serif';
                 ctx.fillText('CK XONG - CHỤP BƯU GỬI', 300, 710);
@@ -258,8 +250,8 @@
 
                     const file = new File([blob], 'QR_ChuyenKhoan.png', { type: 'image/png' });
 
-                    // Nếu là mobile (Zalo/Safari/Chrome hỗ trợ Share API), mở bảng chia sẻ trực tiếp cực mượt
-                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    // Trên Mobile: Ưu tiên dùng Share API gốc cực mượt
+                    if (/Mobi|Android|iPhone/i.test(navigator.userAgent) && navigator.canShare && navigator.canShare({ files: [file] })) {
                         try {
                             await navigator.share({
                                 files: [file],
@@ -267,42 +259,42 @@
                                 text: 'Gửi mã QR chuyển khoản'
                             });
                             btnText.innerText = '✅ Thành công!';
-                            setTimeout(() => { btnText.innerText = 'SAO CHÉP MÃ QR'; }, 2500);
+                            setTimeout(() => { btnText.innerText = 'CHUYỂN TIỀN'; }, 2500);
                             return;
-                        } catch (shareErr) {
-                            console.log('Người dùng hủy share');
+                        } catch (e) {
+                            console.log('Hủy chia sẻ');
                         }
                     }
 
-                    // Thử ghi vào Clipboard (cho PC và một số trình duyệt cho phép)
+                    // Trên Máy Tính (PC): Trả lại tính năng sao chép ảnh thẻ trực tiếp vào Clipboard rất ổn định
                     try {
                         const item = new ClipboardItem({ 'image/png': blob });
                         await navigator.clipboard.write([item]);
-                        btnText.innerText = '✅ Đã sao chép mã QR!';
-                        setTimeout(() => { btnText.innerText = 'SAO CHÉP MÃ QR'; }, 2500);
+                        btnText.innerText = '✅ Đã sao chép ảnh thẻ!';
+                        setTimeout(() => { btnText.innerText = 'CHUYỂN TIỀN'; }, 2500);
                         return;
                     } catch (clipErr) {
                         console.log('Clipboard bị chặn');
                     }
 
-                    // Fallback cuối cùng: tải về máy
+                    // Fallback phụ nếu PC chặn clipboard: Tải file xuống
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = 'QR_ChuyenKhoan.png';
+                    a.download = `QR_${document.getElementById('cardAccName').innerText.replace(/\s+/g, '_')}.png`;
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
                     URL.revokeObjectURL(url);
 
-                    btnText.innerText = '✅ Đã lưu ảnh!';
-                    setTimeout(() => { btnText.innerText = 'SAO CHÉP MÃ QR'; }, 2500);
+                    btnText.innerText = '✅ Đã tải ảnh xuống!';
+                    setTimeout(() => { btnText.innerText = 'CHUYỂN TIỀN'; }, 2500);
 
                 }, 'image/png');
 
-            } catch (e) {
-                console.error(e);
-                btnText.innerText = 'SAO CHÉP MÃ QR';
+            } catch (err) {
+                console.error(err);
+                btnText.innerText = 'CHUYỂN TIỀN';
                 alert('Vui lòng nhấn giữ trực tiếp vào mã QR để lưu ảnh.');
             }
         }
