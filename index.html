@@ -248,54 +248,48 @@
                 canvas.toBlob(async (blob) => {
                     if (!blob) throw new Error("Lỗi tạo ảnh");
 
-                    const file = new File([blob], 'QR_ChuyenKhoan.png', { type: 'image/png' });
+                    const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
 
-                    // Trên Mobile: Ưu tiên dùng Share API gốc cực mượt
-                    if (/Mobi|Android|iPhone/i.test(navigator.userAgent) && navigator.canShare && navigator.canShare({ files: [file] })) {
-                        try {
-                            await navigator.share({
-                                files: [file],
-                                title: 'Mã QR chuyển khoản',
-                                text: 'Gửi mã QR chuyển khoản'
-                            });
-                            btnText.innerText = '✅ Thành công!';
-                            setTimeout(() => { btnText.innerText = 'CHUYỂN TIỀN'; }, 2500);
-                            return;
-                        } catch (e) {
-                            console.log('Hủy chia sẻ');
+                    if (isMobile) {
+                        const file = new File([blob], 'QR_ChuyenKhoan.png', { type: 'image/png' });
+                        // Dùng Share API cho mobile
+                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                            try {
+                                await navigator.share({
+                                    files: [file],
+                                    title: 'Mã QR chuyển khoản',
+                                    text: 'Gửi mã QR chuyển khoản'
+                                });
+                                btnText.innerText = 'CHUYỂN TIỀN';
+                                return;
+                            } catch (e) {
+                                console.log('Hủy chia sẻ');
+                            }
                         }
+                        
+                        // Nếu trình duyệt mobile không hỗ trợ share hoặc trong app Zalo/FB chặn,
+                        // chỉ đổi chữ hướng dẫn người dùng nhấn giữ chứ KHÔNG tự kích hoạt download file.
+                        btnText.innerText = '👉 Nhấn giữ ảnh để lưu!';
+                        setTimeout(() => { btnText.innerText = 'CHUYỂN TIỀN'; }, 3000);
+                        return;
                     }
 
-                    // Trên Máy Tính (PC): Trả lại tính năng sao chép ảnh thẻ trực tiếp vào Clipboard rất ổn định
+                    // Trên Máy tính (PC): Sao chép trực tiếp vào bộ nhớ tạm
                     try {
                         const item = new ClipboardItem({ 'image/png': blob });
                         await navigator.clipboard.write([item]);
                         btnText.innerText = '✅ Đã sao chép ảnh thẻ!';
                         setTimeout(() => { btnText.innerText = 'CHUYỂN TIỀN'; }, 2500);
-                        return;
                     } catch (clipErr) {
-                        console.log('Clipboard bị chặn');
+                        btnText.innerText = 'CHUYỂN TIỀN';
+                        alert('Không thể tự động sao chép. Bạn vui lòng chuột phải vào ảnh QR để sao chép nhé.');
                     }
-
-                    // Fallback phụ nếu PC chặn clipboard: Tải file xuống
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `QR_${document.getElementById('cardAccName').innerText.replace(/\s+/g, '_')}.png`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-
-                    btnText.innerText = '✅ Đã tải ảnh xuống!';
-                    setTimeout(() => { btnText.innerText = 'CHUYỂN TIỀN'; }, 2500);
 
                 }, 'image/png');
 
             } catch (err) {
                 console.error(err);
                 btnText.innerText = 'CHUYỂN TIỀN';
-                alert('Vui lòng nhấn giữ trực tiếp vào mã QR để lưu ảnh.');
             }
         }
 
