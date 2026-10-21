@@ -6,7 +6,6 @@
     <title>CHUYỂN TIỀN CHO QUỲNH BÚP BÊ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -187,49 +186,103 @@
             toggleModal('qrModal');
         }
 
+        // Vẽ Canvas thuần siêu tốc để sao chép vào Clipboard chuẩn trên mobile
         async function copyCardAsImage() {
             const btnText = document.getElementById('copyBtnText');
-            const cardElement = document.getElementById('qrCardPrint');
-            
-            btnText.innerText = 'Đang xử lý...';
+            btnText.innerText = 'Đang tạo ảnh...';
 
             try {
-                const canvas = await html2canvas(cardElement, {
-                    scale: 2,
-                    useCORS: true,
-                    allowTaint: true,
-                    backgroundColor: '#0f172a'
-                });
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = 600;
+                canvas.height = 780;
 
+                // 1. Vẽ nền thẻ
+                ctx.fillStyle = '#0f172a';
+                if (ctx.roundRect) {
+                    ctx.beginPath();
+                    ctx.roundRect(0, 0, 600, 780, 24);
+                    ctx.fill();
+                } else {
+                    ctx.fillRect(0, 0, 600, 780);
+                }
+
+                // 2. Vẽ tên tài khoản
+                ctx.fillStyle = '#ef4444';
+                ctx.font = '900 32px "Inter", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(document.getElementById('cardAccName').innerText, 300, 70);
+
+                // 3. Vẽ khung trắng chứa QR
+                ctx.fillStyle = '#ffffff';
+                if (ctx.roundRect) {
+                    ctx.beginPath();
+                    ctx.roundRect(80, 100, 440, 440, 16);
+                    ctx.fill();
+                } else {
+                    ctx.fillRect(80, 100, 440, 440);
+                }
+
+                // Lấy ảnh QR từ vùng hiển thị
+                const qrImgElement = document.querySelector('#qrcodeCanvas img') || document.querySelector('#qrcodeCanvas canvas');
+                
+                if (qrImgElement) {
+                    await new Promise((resolve) => {
+                        if (qrImgElement.tagName === 'IMG') {
+                            if (qrImgElement.complete) resolve();
+                            else qrImgElement.onload = resolve;
+                        } else {
+                            resolve();
+                        }
+                    });
+                    ctx.drawImage(qrImgElement, 100, 120, 400, 400);
+                }
+
+                // 4. Vẽ thông tin Ngân hàng & STK
+                ctx.fillStyle = '#e2e8f0';
+                ctx.font = '700 22px "Inter", sans-serif';
+                const bankText = document.getElementById('cardBankName').innerText + '  •  STK: ' + document.getElementById('cardStk').innerText;
+                ctx.fillText(bankText, 300, 580);
+
+                // 5. Vẽ số tiền
+                ctx.fillStyle = '#60a5fa';
+                ctx.font = '800 28px "Inter", sans-serif';
+                ctx.fillText(document.getElementById('cardAmount').innerText, 300, 635);
+
+                // 6. Vẽ chú thích cuối
+                ctx.fillStyle = '#facc15';
+                ctx.font = '900 26px "Inter", sans-serif';
+                ctx.fillText('CK XONG - CHỤP BƯU GỬI', 300, 710);
+
+                // Xuất ra Blob và ghi vào Clipboard
                 canvas.toBlob(async (blob) => {
-                    if (!blob) throw new Error("Không thể tạo ảnh");
+                    if (!blob) throw new Error("Lỗi tạo ảnh");
 
                     try {
-                        // Thử ghi thẳng vào bộ nhớ tạm (Clipboard)
-                        if (navigator.clipboard && window.ClipboardItem) {
-                            const item = new ClipboardItem({ 'image/png': blob });
-                            await navigator.clipboard.write([item]);
-                            btnText.innerText = '✅ Đã sao chép vào bộ nhớ tạm!';
-                            setTimeout(() => { btnText.innerText = 'SAO CHÉP MÃ QR'; }, 2500);
-                            return;
-                        }
-                    } catch (clipboardErr) {
-                        console.log("Trình duyệt chặn ghi trực tiếp, chuyển sang phương án phụ.");
+                        const item = new ClipboardItem({ 'image/png': blob });
+                        await navigator.clipboard.write([item]);
+                        btnText.innerText = '✅ Đã sao chép mã QR!';
+                        setTimeout(() => { btnText.innerText = 'SAO CHÉP MÃ QR'; }, 2500);
+                    } catch (err) {
+                        // Fallback nếu trình duyệt chặn Clipboard, tải ảnh trực tiếp về máy cực nhanh
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'QR_ChuyenKhoan.png';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+
+                        btnText.innerText = '✅ Đã tải ảnh về máy!';
+                        setTimeout(() => { btnText.innerText = 'SAO CHÉP MÃ QR'; }, 2500);
                     }
-
-                    // Nếu trình duyệt di động bảo mật chặn Clipboard trực tiếp, dùng lệnh chọn vùng ảnh để người dùng bấm copy 1 chạm
-                    const item = new ClipboardItem({ "image/png": blob });
-                    await navigator.clipboard.write([item]);
-                    
-                    btnText.innerText = '✅ Đã sao chép mã QR!';
-                    setTimeout(() => { btnText.innerText = 'SAO CHÉP MÃ QR'; }, 2500);
-
                 }, 'image/png');
 
-            } catch (err) {
-                console.error(err);
+            } catch (e) {
+                console.error(e);
                 btnText.innerText = 'SAO CHÉP MÃ QR';
-                alert('Thiết bị di động yêu cầu quyền tương tác. Bạn vui lòng nhấn giữ trực tiếp vào khung ảnh QR rồi chọn "Sao chép ảnh" nhé!');
+                alert('Vui lòng nhấn giữ vào mã QR để lưu ảnh.');
             }
         }
 
@@ -287,7 +340,7 @@
                                 <button onclick="setQuickAmount(${chat.id}, 100000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">100k</button>
                                 <button onclick="setQuickAmount(${chat.id}, 150000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">150k</button>
                                 <button onclick="setQuickAmount(${chat.id}, 200000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">200k</button>
-                                <button onclick="setQuickAmount(${chat.id}, 250000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">250k</button>
+                                <button onclick="setQuickAmount({chat.id}, 250000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">250k</button>
                                 <button onclick="setQuickAmount(${chat.id}, 500000)" class="px-2.5 py-1 rounded-lg bg-black hover:bg-slate-900 text-[11px] font-bold text-yellow-400 border border-yellow-500/50 shadow-sm whitespace-nowrap transition">500k</button>
                             </div>
                         </div>
