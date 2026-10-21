@@ -204,35 +204,48 @@
                 canvas.toBlob(async (blob) => {
                     if (!blob) throw new Error("Không thể tạo ảnh");
 
+                    // Kiểm tra hỗ trợ Clipboard API trên thiết bị di động
                     if (navigator.clipboard && window.ClipboardItem) {
                         try {
                             const item = new ClipboardItem({ 'image/png': blob });
                             await navigator.clipboard.write([item]);
-                            btnText.innerText = '✅ Đã sao chép!';
+                            btnText.innerText = '✅ Đã sao chép vào bộ nhớ!';
                             setTimeout(() => { btnText.innerText = 'SAO CHÉP MÃ QR'; }, 2500);
                             return;
                         } catch (clipboardErr) {
-                            console.log("Clipboard bị chặn, chuyển sang tải file xuống.");
+                            console.log("Trình duyệt di động chặn quyền Clipboard trực tiếp.");
                         }
                     }
 
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'QR_ChuyenKhoan.png';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
+                    // Nếu trình duyệt di động chặn ghi Clipboard trực tiếp, mở ảnh ra tab mới để người dùng nhấn giữ sao chép 1 chạm
+                    const imageUrl = URL.createObjectURL(blob);
+                    const newWindow = window.open();
+                    if (newWindow) {
+                        newWindow.document.write(`
+                            <html>
+                            <head><title>Sao chép ảnh mã QR</title></head>
+                            <body style="background:#0f172a;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;margin:0;color:white;font-family:sans-serif;text-align:center;">
+                                <p style="font-size:16px;margin-bottom:15px;font-weight:bold;">👉 Nhấn giữ vào ảnh bên dưới rồi chọn "Sao chép ảnh"</p>
+                                <img src="${imageUrl}" style="max-width:90%;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,0.5);" />
+                            </body>
+                            </html>
+                        `);
+                    } else {
+                        // Fallback cuối cùng nếu bị chặn popup
+                        const a = document.createElement('a');
+                        a.href = imageUrl;
+                        a.target = '_blank';
+                        a.click();
+                    }
 
-                    btnText.innerText = '✅ Đã tải về máy!';
+                    btnText.innerText = '✅ Đã mở ảnh để sao chép!';
                     setTimeout(() => { btnText.innerText = 'SAO CHÉP MÃ QR'; }, 2500);
                 }, 'image/png');
 
             } catch (err) {
                 console.error(err);
                 btnText.innerText = 'SAO CHÉP MÃ QR';
-                alert('Không thể sao chép tự động. Vui lòng thử lại.');
+                alert('Không thể thực hiện tự động. Vui lòng thử lại.');
             }
         }
 
